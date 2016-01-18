@@ -30,7 +30,10 @@ class applicationform_module
 			{
 				trigger_error($user->lang['FORM_INVALID'] . adm_back_link($this->u_action), E_USER_WARNING);
 			}
-
+			if (utf8_normalize_nfc($request->variable('appform_positions', '', true)) === '')
+			{
+				trigger_error($user->lang['APPFORM_MUST_HAVE_POSITIONS'] . adm_back_link($this->u_action), E_USER_WARNING);
+			}
 			// Set the options the user configured
 			$this->set_options();
 

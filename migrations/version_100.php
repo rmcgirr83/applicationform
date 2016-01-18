@@ -16,11 +16,6 @@ namespace rmcgirr83\applicationform\migrations;
 
 class version_100 extends \phpbb\db\migration\migration
 {
-	public function effectively_installed()
-	{
-		return (isset($this->config['appform_forum_id']) && isset($this->config['appform_positions']));
-	}
-
 	static public function depends_on()
 	{
 		return array('\phpbb\db\migration\data\v31x\v314rc1');

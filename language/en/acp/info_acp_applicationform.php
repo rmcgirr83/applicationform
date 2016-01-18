@@ -43,4 +43,5 @@ $lang = array_merge($lang, array(
 	'APPLICATIONFORM_POSITIONS'			=> 'Application positions',
 	'APPLICATIONFORM_POSITIONS_EXPLAIN'		=> 'Enter positions for users to apply for separated by new lines.',
 	'APPFORM_SETTINGS_SUCCESS'			=> 'Application Form settings have been saved.',
+	'APPFORM_MUST_HAVE_POSITIONS'		=> 'You must have at least one position.',
 ));
