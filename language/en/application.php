@@ -40,7 +40,7 @@ $lang = array_merge($lang, array(
 	'APPLICATION_MESSAGE'			=> 'A user, <strong>%1$s</strong>, has applied with the following information using the application form.<br /><br />[b]Real name[/b]: %2$s<br />[b]E-mail address[/b]: %3$s<br />[b]Applying for[/b]: %4$s<br />[b]Reason for applying:[/b] %5$s',
 	'APPLICATION_SEND'				=> 'Your application has been sent to the administrators of this board. They’ll decide upon your application in the coming days.',
 	'APPLICATION_PAGETITLE'			=> 'Application form',
-	
+
 	'APPLICATION_WELCOME_MESSAGE'	=> 'Welcome to the application form. We have team positions open that you may, if you feel you’re the right person, with to apply for. Please fill out the form below to be considered for the chosen position. Good luck!<br><br><strong><em>Items marked with an asterisk must be filled out!</em></strong>',
 	'APPLICATION_REALNAME'			=> 'Real name',
 	'APPLICATION_EMAIL'				=> 'E-mail address',
@@ -48,5 +48,3 @@ $lang = array_merge($lang, array(
 	'APPLICATION_WHY'				=> 'Why should we choose you for this position?',
 	'APP_NOT_COMPLETELY_FILLED'		=> 'You need to complete all fields in the application.  Please try again.',
 ));
-
-?>

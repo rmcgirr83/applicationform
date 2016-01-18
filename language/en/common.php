@@ -38,5 +38,3 @@ $lang = array_merge($lang, array(
 	'APPLICATION_FORM'				=> 'Application Form',
 	'APPLICATION_FORM_EXPLAIN'		=> 'Here you can apply to become a team member',
 ));
-
-?>

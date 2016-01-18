@@ -115,11 +115,11 @@ class main_controller
 			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']), utf8_normalize_nfc($this->request->variable('name', '', true)), $this->user->data['user_email'], $this->request->variable('postion', '', true), utf8_normalize_nfc($this->request->variable('why', '', true)));
 
 			// variables to hold the parameters for submit_post
-			$uid = $bitfield = $options = ''; 
+			$uid = $bitfield = $options = '';
 
 			generate_text_for_storage($apply_post, $uid, $bitfield, $options, true, true, true);
 
-			$data = array( 
+			$data = array(
 				'forum_id'		=> $this->config['appform_forum_id'],
 				'icon_id'		=> false,
 				'poster_id' 	=> $this->user->data['user_id'],
@@ -130,11 +130,11 @@ class main_controller
 
 				'message'			=> $apply_post,
 				'message_md5'		=> md5($apply_post),
-							
+
 				'bbcode_bitfield'	=> $bitfield,
 				'bbcode_uid'		=> $uid,
 				'poster_ip'			=> $this->user->ip,
-				
+
 				'post_edit_locked'	=> 0,
 				'topic_title'		=> $subject,
 				'notify_set'		=> false,
@@ -157,7 +157,7 @@ class main_controller
 		$this->template->assign_vars(array(
 			'APPLICATION_POSITIONS' => $this->display_positions(explode("\n", $this->config['appform_positions'])),
 		));
-			
+
 		// Send all data to the template file
 		return $this->helper->render('appform_body.html', $this->user->lang('APPLICATION_PAGETITLE'));
 	}

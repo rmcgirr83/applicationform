@@ -7,17 +7,19 @@
 *
 */
 namespace rmcgirr83\applicationform\event;
+
 /**
 * @ignore
 */
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
 /**
 * Event listener
 */
 class listener implements EventSubscriberInterface
 {
-    /** @var \phpbb\controller\helper */
-    protected $controller_helper;
+	/** @var \phpbb\controller\helper */
+	protected $controller_helper;
 
 	/* @var \phpbb\template\template */
 	protected $template;
@@ -34,8 +36,8 @@ class listener implements EventSubscriberInterface
 		\phpbb\user $user,
 		\phpbb\auth\auth $auth)
 	{
-        $this->controller_helper = $controller_helper;
-        $this->template = $template;
+		$this->controller_helper = $controller_helper;
+		$this->template = $template;
 		$this->user = $user;
 		$this->auth = $auth;
 	}
@@ -62,6 +64,5 @@ class listener implements EventSubscriberInterface
 	public function page_header($event)
 	{
 		$this->template->assign_var('U_APP_FORM', $this->controller_helper->route('rmcgirr83_applicationform_display'));
-    }
+	}
 }
-
