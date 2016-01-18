@@ -1,0 +1,21 @@
+services:
+    rmcgirr83.applicationform.main.controller:
+        class: rmcgirr83\applicationform\controller\main_controller
+        arguments:
+            - @config
+            - @dbal.conn
+            - @controller.helper
+            - @request
+            - @template
+            - @user
+            - %core.root_path%
+            - %core.php_ext%
+    rmcgirr83.applicationform.listener:
+        class: rmcgirr83\applicationform\event\listener
+        arguments:
+            - @controller.helper
+            - @template
+            - @user
+            - @auth
+        tags:
+            - { name: event.listener }

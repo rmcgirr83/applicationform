@@ -1,0 +1,29 @@
+<!-- INCLUDE overall_header.html -->
+<h1>{L_ACP_APPLICATIONFORM_SETTINGS}</h1>
+
+<!-- IF ERROR -->
+	<div class="errorbox"><h3>{L_WARNING}</h3>
+		<p>{ERROR}</p>
+	</div>
+<!-- ENDIF -->
+
+<form id="applicationform_settings" method="post" action="{U_ACTION}">
+	<fieldset>
+		<dl>
+			<dt><label for="appform_forum_id">{L_APPLICATIONFORM_FORUM}{L_COLON}</label><br />
+			<span>{L_APPLICATIONFORM_FORUM_EXPLAIN}</span></dt>
+			<dd>{APPFORM_FORUM_ID}</dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_positions">{L_APPLICATIONFORM_POSITIONS}{L_COLON}</label><br />
+			<span>{L_APPLICATIONFORM_POSITIONS_EXPLAIN}</span></dt>
+			<dd><textarea name="appform_positions" id="appform_positions" rows="10" cols="40">{APPFORM_POSITIONS}</textarea></dd>
+		</dl>
+		<p class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+		</p>
+		{S_FORM_TOKEN}
+	</fieldset>
+</form>
+<!-- INCLUDE overall_footer.html -->
