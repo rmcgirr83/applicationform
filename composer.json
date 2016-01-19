@@ -22,7 +22,7 @@
 	"extra": {
 		"display-name": "Application Form",
 		"soft-require": {
-			"phpbb/phpbb": ">=3.1.1"
+			"phpbb/phpbb": ">=3.1.3"
 		}
 	}
 }
