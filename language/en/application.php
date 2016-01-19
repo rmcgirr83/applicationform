@@ -41,7 +41,7 @@ $lang = array_merge($lang, array(
 	'APPLICATION_SEND'				=> 'Your application has been sent to the administrators of this board. They’ll decide upon your application in the coming days.',
 	'APPLICATION_PAGETITLE'			=> 'Application form',
 
-	'APPLICATION_WELCOME_MESSAGE'	=> 'Welcome to the application form. We have team positions open that you may, if you feel you’re the right person, with to apply for. Please fill out the form below to be considered for the chosen position. Good luck!<br><br><strong><em>Items marked with an asterisk must be filled out!</em></strong>',
+	'APPLICATION_WELCOME_MESSAGE'	=> 'Welcome to the application form. We have team positions open that you may, if you feel you’re the right person, wish to apply for. Please fill out the form below to be considered for the chosen position. Good luck!<br><br><strong><em>Items marked with an asterisk must be filled out!</em></strong>',
 	'APPLICATION_REALNAME'			=> 'Real name',
 	'APPLICATION_EMAIL'				=> 'E-mail address',
 	'APPLICATION_POSITION'			=> 'Position you would like to have',
