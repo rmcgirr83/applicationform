@@ -19,7 +19,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class listener implements EventSubscriberInterface
 {
 	/** @var \phpbb\controller\helper */
-	protected $controller_helper;
+	protected $helper;
 
 	/* @var \phpbb\template\template */
 	protected $template;
@@ -31,12 +31,12 @@ class listener implements EventSubscriberInterface
 	protected $auth;
 
 	public function __construct(
-		\phpbb\controller\helper $controller_helper,
+		\phpbb\controller\helper $helper,
 		\phpbb\template\template $template,
 		\phpbb\user $user,
 		\phpbb\auth\auth $auth)
 	{
-		$this->controller_helper = $controller_helper;
+		$this->helper = $helper;
 		$this->template = $template;
 		$this->user = $user;
 		$this->auth = $auth;
@@ -63,6 +63,6 @@ class listener implements EventSubscriberInterface
 
 	public function page_header($event)
 	{
-		$this->template->assign_var('U_APP_FORM', $this->controller_helper->route('rmcgirr83_applicationform_display'));
+		$this->template->assign_var('U_APP_FORM', $this->helper->route('rmcgirr83_applicationform_displayform'));
 	}
 }
