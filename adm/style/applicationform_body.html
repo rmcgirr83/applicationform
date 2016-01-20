@@ -15,6 +15,12 @@
 			<dd>{APPFORM_FORUM_ID}</dd>
 		</dl>
 		<dl>
+			<dt><label for="appform_nru">{L_APPLICATIONFORM_NRU}{L_COLON}</label><br />
+			<span>{L_APPLICATIONFORM_NRU_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" name="appform_nru" value="1" <!-- IF APPFORUM_NRU -->id="appform_nru" checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+			<label><input type="radio" class="radio" name="appform_nru" value="0" <!-- IF not APPFORUM_NRU -->id="appform_nru" checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+		<dl>
 			<dt><label for="appform_positions">{L_APPLICATIONFORM_POSITIONS}{L_COLON}</label><br />
 			<span>{L_APPLICATIONFORM_POSITIONS_EXPLAIN}</span></dt>
 			<dd><textarea name="appform_positions" id="appform_positions" rows="10" cols="40">{APPFORM_POSITIONS}</textarea></dd>

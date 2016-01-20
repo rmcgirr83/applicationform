@@ -10,12 +10,19 @@ services:
             - @user
             - %core.root_path%
             - %core.php_ext%
+            - @rmcgirr83.applicationform.functions
     rmcgirr83.applicationform.listener:
         class: rmcgirr83\applicationform\event\listener
         arguments:
+            - @config
             - @controller.helper
             - @template
             - @user
             - @auth
+            - @rmcgirr83.applicationform.functions
         tags:
             - { name: event.listener }
+    rmcgirr83.applicationform.functions:
+        class: rmcgirr83\applicationform\core\applicationform
+        arguments:
+            - @dbal.conn

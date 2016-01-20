@@ -35,7 +35,6 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'LOGIN_APPLICATION_FORM'		=> 'You need to login before you can apply for a position.',
 	'APPLICATION_SUBJECT'			=> 'Application from %s',
 	'APPLICATION_MESSAGE'			=> 'A user, <strong>%1$s</strong>, has applied with the following information using the application form.<br /><br />[b]Real name[/b]: %2$s<br />[b]E-mail address[/b]: %3$s<br />[b]Applying for[/b]: %4$s<br />[b]Reason for applying:[/b] %5$s',
 	'APPLICATION_SEND'				=> 'Your application has been sent to the administrators of this board. They’ll decide upon your application in the coming days.',

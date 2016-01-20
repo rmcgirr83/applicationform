@@ -44,6 +44,7 @@ class applicationform_module
 			'ERROR'			=> isset($error) ? ((sizeof($error)) ? implode('<br />', $error) : '') : '',
 			'APPFORM_FORUM_ID' => $this->appform_forum_select($config['appform_forum_id']),
 			'APPFORM_POSITIONS'	=> utf8_normalize_nfc($request->variable('appform_positions', $config['appform_positions'], true)),
+			'APPFORUM_NRU'	=> $request->variable('appform_nru', 0),
 
 			'U_ACTION'			=> $this->u_action,
 		));
@@ -61,6 +62,7 @@ class applicationform_module
 
 		$config->set('appform_forum_id', $request->variable('appform_forum_id', 0));
 		$config->set('appform_positions', utf8_normalize_nfc($request->variable('appform_positions', '', true)));
+		$config->set('appform_nru', $request->variable('appform_nru', 0));
 	}
 
 	/**

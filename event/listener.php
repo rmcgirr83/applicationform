@@ -18,6 +18,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 */
 class listener implements EventSubscriberInterface
 {
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var \phpbb\controller\helper */
 	protected $helper;
 
@@ -30,39 +33,43 @@ class listener implements EventSubscriberInterface
 	/** @var \phpbb\auth\auth */
 	protected $auth;
 
+	/* @var \rmcgirr83\applicationform\core\applicationform */
+	protected $functions;
+
 	public function __construct(
+		\phpbb\config\config $config,
 		\phpbb\controller\helper $helper,
 		\phpbb\template\template $template,
 		\phpbb\user $user,
-		\phpbb\auth\auth $auth)
+		\phpbb\auth\auth $auth,
+		\rmcgirr83\applicationform\core\applicationform $functions)
 	{
+		$this->config = $config;
 		$this->helper = $helper;
 		$this->template = $template;
 		$this->user = $user;
 		$this->auth = $auth;
+		$this->functions = $functions;
 	}
 
 	static public function getSubscribedEvents()
 	{
 		return array(
 			'core.page_header'	=> 'page_header',
-			'core.user_setup'	=> 'application_lang'
-			);
-	}
-
-	public function application_lang($event)
-	{
-		$lang_set_ext = $event['lang_set_ext'];
-		$lang_set_ext[] = array(
-			'ext_name' => 'rmcgirr83/applicationform',
-			'lang_set' => 'common',
 		);
-		$event['lang_set_ext'] = $lang_set_ext;
-
 	}
 
 	public function page_header($event)
 	{
+		$nru_group_id = $this->functions->getnruid();
+
+		if ((!$this->config['appform_nru'] && ($nru_group_id === (int) $this->user->data['group_id'])) || $this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS)
+		{
+			$this->template->assign_var('U_APP_FORM', false);
+			return;
+		}
+
+		$this->user->add_lang_ext('rmcgirr83/applicationform', 'common');
 		$this->template->assign_var('U_APP_FORM', $this->helper->route('rmcgirr83_applicationform_displayform'));
 	}
 }

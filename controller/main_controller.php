@@ -41,6 +41,9 @@ class main_controller
 	/** @var string phpEx */
 	protected $php_ext;
 
+	/* @var \rmcgirr83\applicationform\core\applicationform */
+	protected $functions;
+
 	/**
 	* Constructor
 	*
@@ -52,6 +55,7 @@ class main_controller
 	* @param \phpbb\user                        $user           User object
 	* @param string                             $root_path      phpBB root path
 	* @param string                             $php_ext        phpEx
+	* @param \rmcgirr83\applicationform\core\applicationform	$functions	functions to be used by class
 	* @access public
 	*/
 	public function __construct(
@@ -62,7 +66,8 @@ class main_controller
 			\phpbb\template\template $template,
 			\phpbb\user $user,
 			$root_path,
-			$php_ext)
+			$php_ext,
+			\rmcgirr83\applicationform\core\applicationform $functions)
 	{
 		$this->config = $config;
 		$this->db = $db;
@@ -72,6 +77,7 @@ class main_controller
 		$this->user = $user;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
+		$this->functions = $functions;
 
 		include_once($this->root_path . 'includes/functions_posting.' . $this->php_ext);
 	}
@@ -83,12 +89,15 @@ class main_controller
 	 */
 	public function displayform()
 	{
-		$this->user->add_lang_ext('rmcgirr83/applicationform', 'application');
-		// user can't be a guest and can't be a bot
-		if ($this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS)
+		if ($this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS || (!$this->config['appform_nru'] && ($nru_group_id === (int) $this->user->data['group_id'])))
 		{
-			throw new http_exception(401, 'LOGIN_APPLICATION_FORM');
+			throw new http_exception(401, 'NOT_AUTHORISED');
 		}
+		$this->user->add_lang_ext('rmcgirr83/applicationform', 'application');
+
+		$nru_group_id = $this->functions->getnruid();
+		// user can't be a guest and can't be a bot
+
 		add_form_key('appform');
 
 		if ($this->request->is_set_post('submit'))

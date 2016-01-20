@@ -41,7 +41,9 @@ $lang = array_merge($lang, array(
 	'APPLICATIONFORM_FORUM'				=> 'Forum',
 	'APPLICATIONFORM_FORUM_EXPLAIN'		=> 'Select the forum, where the application should post to.',
 	'APPLICATIONFORM_POSITIONS'			=> 'Application positions',
-	'APPLICATIONFORM_POSITIONS_EXPLAIN'		=> 'Enter positions for users to apply for separated by new lines.',
+	'APPLICATIONFORM_POSITIONS_EXPLAIN'	=> 'Enter positions for users to apply for separated by new lines.',
 	'APPFORM_SETTINGS_SUCCESS'			=> 'Application Form settings have been saved.',
 	'APPFORM_MUST_HAVE_POSITIONS'		=> 'You must have at least one position.',
+	'APPLICATIONFORM_NRU'				=> 'Allow newly registered group',
+	'APPLICATIONFORM_NRU_EXPLAIN'		=> 'If set yes, those in the newly registered group will have access to the application form.',
 ));
