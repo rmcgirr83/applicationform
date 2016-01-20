@@ -9,8 +9,6 @@
 
 namespace rmcgirr83\applicationform\core;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-
 class applicationform
 {
 
