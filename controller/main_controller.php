@@ -89,14 +89,12 @@ class main_controller
 	 */
 	public function displayform()
 	{
+		$nru_group_id = $this->functions->getnruid();
 		if ($this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS || (!$this->config['appform_nru'] && ($nru_group_id === (int) $this->user->data['group_id'])))
 		{
 			throw new http_exception(401, 'NOT_AUTHORISED');
 		}
 		$this->user->add_lang_ext('rmcgirr83/applicationform', 'application');
-
-		$nru_group_id = $this->functions->getnruid();
-		// user can't be a guest and can't be a bot
 
 		add_form_key('appform');
 
