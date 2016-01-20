@@ -1,7 +1,7 @@
 phpBB-3.1-applicationform
 =========================
 
-phpBB 3.1 extension that allows users to apply for a certain team positions. The applications are sent to a forum, as chosen in the ACP settings of the extension, where administrators can read them and see if the users are the best for the position.
+phpBB 3.1 extension that allows users to apply for certain team positions. The applications are sent to a forum, as chosen in the ACP settings of the extension, where administrators can read them and see if the users are the best for the position.
 
 [![Build Status](https://travis-ci.org/RMcGirr83/phpBB-3.1-applicationform.svg?branch=master)](https://travis-ci.org/RMcGirr83/phpBB-3.1-applicationform)
 ## Installation
@@ -17,7 +17,7 @@ git clone https://github.com/RMcGirr83/phpBB-3.1-applicationform.git ext/rmcgirr
 ### 2. activate
 Go to admin panel -> tab customise -> Manage extensions -> enable Application Form
 
-Within the Admin panel visit the Extensions tab and choose the settings (allow, require on registration, display message) for the extension.
+Within the Admin panel visit the Extensions tab and choose the settings for the extension.
 
 ## Update instructions:
 1. Go to you phpBB-Board > Admin Control Panel > Customise > Manage extensions > Application Form: disable
