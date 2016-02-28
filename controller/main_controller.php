@@ -119,7 +119,7 @@ class main_controller
 
 			// Setting the variables we need to submit the post to the forum where all the applications come in
 			$subject	= sprintf($this->user->lang['APPLICATION_SUBJECT'], $this->user->data['username']);
-			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']), utf8_normalize_nfc($this->request->variable('name', '', true)), $this->user->data['user_email'], $this->request->variable('postion', '', true), utf8_normalize_nfc($this->request->variable('why', '', true)));
+			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']), $this->request->variable('name', '', true), $this->user->data['user_email'], $this->request->variable('postion', '', true), $this->request->variable('why', '', true));
 
 			// variables to hold the parameters for submit_post
 			$uid = $bitfield = $options = '';
