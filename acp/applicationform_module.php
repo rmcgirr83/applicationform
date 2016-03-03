@@ -44,7 +44,7 @@ class applicationform_module
 			'ERROR'			=> isset($error) ? ((sizeof($error)) ? implode('<br />', $error) : '') : '',
 			'APPFORM_FORUM_ID' => $this->appform_forum_select($config['appform_forum_id']),
 			'APPFORM_POSITIONS'	=> $request->variable('appform_positions', $config['appform_positions'], true),
-			'APPFORUM_NRU'	=> $request->variable('appform_nru', 0),
+			'APPFORUM_NRU'	=> $request->variable('appform_nru', $config['appform_nru']),
 
 			'U_ACTION'			=> $this->u_action,
 		));
