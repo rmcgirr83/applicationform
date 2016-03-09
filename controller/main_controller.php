@@ -79,7 +79,10 @@ class main_controller
 		$this->php_ext = $php_ext;
 		$this->functions = $functions;
 
-		include_once($this->root_path . 'includes/functions_posting.' . $this->php_ext);
+		if (!function_exists('submit_post'))
+		{
+			include($this->root_path . 'includes/functions_posting.' . $this->php_ext);
+		}
 	}
 
 	/**
@@ -96,16 +99,16 @@ class main_controller
 		}
 		$this->user->add_lang_ext('rmcgirr83/applicationform', 'application');
 
-		add_form_key('appform');
+		add_form_key('applicationform');
 
 		if ($this->request->is_set_post('submit'))
 		{
 			// Test if form key is valid
-			if (!check_form_key('appform'))
+			if (!check_form_key('applicationform'))
 			{
 				trigger_error($this->user->lang['FORM_INVALID'], E_USER_WARNING);
 			}
-			if (utf8_clean_string($this->request->variable('name', '')) === '' || utf8_clean_string($this->request->variable('why', '')) === '')
+			if ($this->request->variable('name', '') === '' || $this->request->variable('why', '') === '')
 			{
 				trigger_error($this->user->lang['APP_NOT_COMPLETELY_FILLED'], E_USER_WARNING);
 			}
