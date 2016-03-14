@@ -21,6 +21,18 @@
 			<label><input type="radio" class="radio" name="appform_nru" value="0" <!-- IF not APPFORUM_NRU -->id="appform_nru" checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
 		</dl>
 		<dl>
+			<dt><label for="appform_attach">{L_APPLICATIONFORM_ALLOW_ATTACHMENT}{L_COLON}</label><br />
+			<span>{L_APPLICATIONFORM_ALLOW_ATTACHMENT_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" name="appform_attach" value="1" <!-- IF APPFORM_ATTACHMENTS -->id="appform_attach" checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+			<label><input type="radio" class="radio" name="appform_attach" value="0" <!-- IF not APPFORM_ATTACHMENTS -->id="appform_attach" checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_attach_req">{L_APPLICATIONFORM_ATTACHMENT_REQ}{L_COLON}</label><br />
+			<span>{L_APPLICATIONFORM_ATTACHMENT_REQ_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" name="appform_attach_req" value="1" <!-- IF APPFORM_ATTACHMENT_REQ -->id="appform_attach_req" checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+			<label><input type="radio" class="radio" name="appform_attach_req" value="0" <!-- IF not APPFORM_ATTACHMENT_REQ -->id="appform_attach_req" checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+		<dl>
 			<dt><label for="appform_positions">{L_APPLICATIONFORM_POSITIONS}{L_COLON}</label><br />
 			<span>{L_APPLICATIONFORM_POSITIONS_EXPLAIN}</span></dt>
 			<dd><textarea name="appform_positions" id="appform_positions" rows="10" cols="40">{APPFORM_POSITIONS}</textarea></dd>

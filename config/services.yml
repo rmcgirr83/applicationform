@@ -2,27 +2,27 @@ services:
     rmcgirr83.applicationform.main.controller:
         class: rmcgirr83\applicationform\controller\main_controller
         arguments:
-            - @config
-            - @dbal.conn
-            - @controller.helper
-            - @request
-            - @template
-            - @user
-            - %core.root_path%
-            - %core.php_ext%
-            - @rmcgirr83.applicationform.functions
+            - '@config'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '@rmcgirr83.applicationform.functions'
     rmcgirr83.applicationform.listener:
         class: rmcgirr83\applicationform\event\listener
         arguments:
-            - @config
-            - @controller.helper
-            - @template
-            - @user
-            - @auth
-            - @rmcgirr83.applicationform.functions
+            - '@config'
+            - '@controller.helper'
+            - '@template'
+            - '@user'
+            - '@auth'
+            - '@rmcgirr83.applicationform.functions'
         tags:
             - { name: event.listener }
     rmcgirr83.applicationform.functions:
         class: rmcgirr83\applicationform\core\applicationform
         arguments:
-            - @dbal.conn
+            - '@dbal.conn'

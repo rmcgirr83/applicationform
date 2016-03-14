@@ -36,7 +36,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'APPLICATION_SUBJECT'			=> 'Application from %s',
-	'APPLICATION_MESSAGE'			=> 'A user, <strong>%1$s</strong>, has applied with the following information using the application form.<br /><br />[b]Real name[/b]: %2$s<br />[b]E-mail address[/b]: %3$s<br />[b]Applying for[/b]: %4$s<br />[b]Reason for applying:[/b] %5$s',
+	'APPLICATION_MESSAGE'			=> 'A user, <strong>%1$s</strong>, has applied with the following information using the application form.<br /><br />[b]Real name[/b]: %2$s<br />[b]Applying for[/b]: %3$s<br />[b]Reason for applying:[/b] %4$s',
 	'APPLICATION_SEND'				=> 'Your application has been sent to the administrators of this board. They’ll decide upon your application in the coming days.',
 	'APPLICATION_PAGETITLE'			=> 'Application form',
 
@@ -45,5 +45,8 @@ $lang = array_merge($lang, array(
 	'APPLICATION_EMAIL'				=> 'E-mail address',
 	'APPLICATION_POSITION'			=> 'Position you would like to have',
 	'APPLICATION_WHY'				=> 'Why should we choose you for this position?',
-	'APP_NOT_COMPLETELY_FILLED'		=> 'You need to complete all fields in the application.  Please try again.',
+	'APP_NOT_COMPLETELY_FILLED'		=> 'You need to complete all fields in the application.',
+	'ADD_ATTACHMENT_EXPLAIN'		=> 'Attach a file to assist us in making our determination on your application.',
+	'ADD_ATTACHMENT_REQ'			=> '<strong>You must attach a file in order to be considered for the position</strong>.',
+	'APPLICATION_REQUIRES_ATTACHMENT'	=> 'Please attach a file for the position you are applying for.',
 ));

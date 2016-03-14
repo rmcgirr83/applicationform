@@ -1,26 +1,48 @@
 <!-- INCLUDE overall_header.html -->
-<form method="post" id="appform"> 
+
+<form method="post" id="appform" {S_FORM_ENCTYPE}> 
 	<div class="panel">
 		<div class="inner">
 			<h2>{L_APPLICATION_PAGETITLE}</h2>
 			<p>{L_APPLICATION_WELCOME_MESSAGE}</p>
 			<fieldset class="fields2">
+				<!-- IF S_ERROR --><dl><dd class="error">{S_ERROR}</dd></dl><!-- ENDIF -->
 				<dl>
 					<dt><label for="name">{L_APPLICATION_REALNAME}{L_COLON}*</label></dt>
-					<dd><input type="text" name="name" class="inputbox autowidth" /></dd>
+					<dd><input type="text" name="name" class="inputbox autowidth" value="{REALNAME}" /></dd>
 				</dl>
 				<dl>
 					<dt><label for="postion">{L_APPLICATION_POSITION}{L_COLON}</label></dt>
-					<dd><select name="postion" id="postion">{APPLICATION_POSITIONS}</select></dd>
+					<dd><select name="position" id="position">{APPLICATION_POSITIONS}</select></dd>
 				</dl>
 				<dl>
-					<dt><label for="WHY">{L_APPLICATION_WHY}{L_COLON}*</label></dt>
-					<dd><textarea rows="5" cols="50" name="why" class="inputbox"></textarea></dd>
+					<dt><label for="why">{L_APPLICATION_WHY}{L_COLON}*</label></dt>
+					<dd><textarea rows="5" cols="50" name="why" class="inputbox">{WHY}</textarea></dd>
 				</dl>
 			</fieldset>
 		</div>
 	</div>
+<!-- IF S_ATTACH_BOX -->
+	<div class="panel bg3 panel-container" id="attach-panel">
+		<div class="inner">
 
+		<p>{L_ADD_ATTACHMENT_EXPLAIN} <!-- IF S_ATTACH_REQ -->{L_ADD_ATTACHMENT_REQ}<!-- ENDIF --></p>
+		
+		<fieldset class="fields2" id="attach-panel-basic">
+		<dl>
+			<dt><label for="fileupload">{L_FILENAME}{L_COLON}<!-- IF S_ATTACH_REQ -->*<!-- ENDIF --></label></dt>
+			<dd>
+				<input type="file" name="fileupload" id="fileupload" class="inputbox autowidth" /> 
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="filecomment">{L_FILE_COMMENT}{L_COLON}</label></dt>
+			<dd><textarea name="filecomment" id="filecomment" rows="1" cols="40" class="inputbox autowidth">{FILE_COMMENT}</textarea></dd>
+		</dl>
+		</fieldset>
+		</div>
+	</div>
+<!-- ENDIF -->
 	<div class="panel bg2">
 		<div class="inner">
 		<fieldset class="submit-buttons">

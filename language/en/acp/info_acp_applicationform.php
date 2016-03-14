@@ -46,4 +46,8 @@ $lang = array_merge($lang, array(
 	'APPFORM_MUST_HAVE_POSITIONS'		=> 'You must have at least one position.',
 	'APPLICATIONFORM_NRU'				=> 'Allow newly registered group',
 	'APPLICATIONFORM_NRU_EXPLAIN'		=> 'If set yes, those in the newly registered group will have access to the application form.',
+	'APPLICATIONFORM_ALLOW_ATTACHMENT'	=> 'Allow attachments',
+	'APPLICATIONFORM_ALLOW_ATTACHMENT_EXPLAIN' => 'If set to yes, files of types doc, pdf and text will be allowed to be uploaded.',
+	'APPLICATIONFORM_ATTACHMENT_REQ'	=> 'Attachment is required',
+	'APPLICATIONFORM_ATTACHMENT_REQ_EXPLAIN' => 'If set to yes, the form will require an attachment for the position being applied for.',
 ));

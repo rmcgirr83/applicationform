@@ -47,14 +47,14 @@ class main_controller
 	/**
 	* Constructor
 	*
-	* @param \phpbb\config\config               $config         Config object
-	* @param \phpbb\db\driver\driver			$db				Database object
-	* @param \phpbb\controller\helper           $helper         Controller helper object
-	* @param \phpbb\request\request				$request		Request object
-	* @param \phpbb\template\template           $template       Template object
-	* @param \phpbb\user                        $user           User object
-	* @param string                             $root_path      phpBB root path
-	* @param string                             $php_ext        phpEx
+	* @param \phpbb\config\config               $config         	Config object
+	* @param \phpbb\db\driver\driver			$db					Database object
+	* @param \phpbb\controller\helper           $helper         	Controller helper object
+	* @param \phpbb\request\request				$request			Request object
+	* @param \phpbb\template\template           $template       	Template object
+	* @param \phpbb\user                        $user           	User object
+	* @param string                             $root_path      	phpBB root path
+	* @param string                             $php_ext        	phpEx
 	* @param \rmcgirr83\applicationform\core\applicationform	$functions	functions to be used by class
 	* @access public
 	*/
@@ -83,6 +83,10 @@ class main_controller
 		{
 			include($this->root_path . 'includes/functions_posting.' . $this->php_ext);
 		}
+		if (!class_exists('parse_message'))
+		{
+			include($this->root_path . 'includes/message_parser.' . $this->php_ext);
+		}
 	}
 
 	/**
@@ -93,96 +97,149 @@ class main_controller
 	public function displayform()
 	{
 		$nru_group_id = $this->functions->getnruid();
+
 		if ($this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS || (!$this->config['appform_nru'] && ($nru_group_id === (int) $this->user->data['group_id'])))
 		{
 			throw new http_exception(401, 'NOT_AUTHORISED');
 		}
+
+		$this->user->add_lang('posting');
 		$this->user->add_lang_ext('rmcgirr83/applicationform', 'application');
 
+		$attachment_allowed = $this->config['appform_attach'];
+		$attachment_req = $this->config['appform_attach_req'];
+
+
 		add_form_key('applicationform');
+		// we need the following pre-set for the dropdown of the positions
+		// in the template vars
+		$data = array(
+			'position'	=> $this->request->variable('position', '', true),
+		);
 
 		if ($this->request->is_set_post('submit'))
 		{
+			// our data array
+			$data = array(
+				'name'			=> $this->request->variable('name', '', true),
+				'why'			=> $this->request->variable('why', '', true),
+				'position'		=> $this->request->variable('position', '', true),
+			);
+			$message_parser = new \parse_message();
+			$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
+
+			$error = array();
 			// Test if form key is valid
 			if (!check_form_key('applicationform'))
 			{
-				trigger_error($this->user->lang['FORM_INVALID'], E_USER_WARNING);
+				$error[] = $this->user->lang['FORM_INVALID'];
 			}
-			if ($this->request->variable('name', '') === '' || $this->request->variable('why', '') === '')
+			if ($data['name'] === '' || $data['why'] === '')
 			{
-				trigger_error($this->user->lang['APP_NOT_COMPLETELY_FILLED'], E_USER_WARNING);
+				$error[] = $this->user->lang['APP_NOT_COMPLETELY_FILLED'];
 			}
-
-			$sql = 'SELECT forum_name
-				FROM ' . FORUMS_TABLE . '
-				WHERE forum_id = ' . (int) $this->config['appform_forum_id'];
-			$result = $this->db->sql_query($sql);
-			$forum_name = $this->db->sql_fetchfield('forum_name');
-			$this->db->sql_freeresult($result);
-
+			if (empty($message_parser->attachment_data) && $attachment_req)
+			{
+				$error[] = $this->user->lang['APPLICATION_REQUIRES_ATTACHMENT'];
+			}
 			// Setting the variables we need to submit the post to the forum where all the applications come in
+			$message = censor_text(trim('[quote] ' . $data['why'] . '[/quote]'));
 			$subject	= sprintf($this->user->lang['APPLICATION_SUBJECT'], $this->user->data['username']);
-			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']), $this->request->variable('name', '', true), $this->user->data['user_email'], $this->request->variable('postion', '', true), $this->request->variable('why', '', true));
+			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']), $this->request->variable('name', '', true), $data['position'], $message);
 
-			// variables to hold the parameters for submit_post
-			$uid = $bitfield = $options = '';
+			$message_parser->message = $apply_post;
+			//$message_parser->get_submitted_attachment_data();
 
-			generate_text_for_storage($apply_post, $uid, $bitfield, $options, true, true, true);
+			$message_md5 = md5($message_parser->message);
 
-			$data = array(
-				'forum_id'		=> $this->config['appform_forum_id'],
-				'icon_id'		=> false,
-				'poster_id' 	=> $this->user->data['user_id'],
-				'enable_bbcode'		=> true,
-				'enable_smilies'	=> true,
-				'enable_urls'		=> true,
-				'enable_sig'		=> true,
+			if (sizeof($message_parser->warn_msg))
+			{
+				$error[] = implode('<br />', $message_parser->warn_msg);
+			}
+			$message_parser->parse(true, true, true, true, false, true, true);
 
-				'message'			=> $apply_post,
-				'message_md5'		=> md5($apply_post),
+			// no errors, let's proceed
+			if ($this->request->is_set_post('submit') && !sizeof($error))
+			{
+				$sql = 'SELECT forum_name
+					FROM ' . FORUMS_TABLE . '
+					WHERE forum_id = ' . (int) $this->config['appform_forum_id'];
+				$result = $this->db->sql_query($sql);
+				$forum_name = $this->db->sql_fetchfield('forum_name');
+				$this->db->sql_freeresult($result);
 
-				'bbcode_bitfield'	=> $bitfield,
-				'bbcode_uid'		=> $uid,
-				'poster_ip'			=> $this->user->ip,
+				$data = array(
+					'forum_id'			=> $this->config['appform_forum_id'],
+					'icon_id'			=> false,
+					'poster_id' 		=> $this->user->data['user_id'],
+					'enable_bbcode'		=> true,
+					'enable_smilies'	=> true,
+					'enable_urls'		=> true,
+					'enable_sig'		=> true,
 
-				'post_edit_locked'	=> 0,
-				'topic_title'		=> $subject,
-				'notify_set'		=> false,
-				'notify'			=> false,
-				'post_time' 		=> time(),
-				'forum_name'		=> $forum_name,
-				'enable_indexing'	=> true,
-				'force_approved_state'	=> true,
-				'force_visibility' => true,
-			);
-			$poll = array();
+					'message'			=> $message_parser->message,
+					'message_md5'		=> $message_md5,
+					'attachment_data'	=> $message_parser->attachment_data,
+					'filename_data'		=> $message_parser->filename_data,
 
-			// Submit the post!
-			submit_post('post', $subject, $this->user->data['username'], POST_NORMAL, $poll, $data);
+					'bbcode_bitfield'	=> $message_parser->bbcode_bitfield,
+					'bbcode_uid'		=> $message_parser->bbcode_uid,
+					'poster_ip'			=> $this->user->ip,
 
-			$message = $this->user->lang['APPLICATION_SEND'];
-			$message = $message . '<br /><br />' . sprintf($this->user->lang['RETURN_INDEX'], '<a href="' . append_sid("{$this->root_path}index.$this->php_ext") . '">', '</a>');
-			trigger_error($message);
+					'post_edit_locked'	=> 0,
+					'topic_title'		=> $subject,
+					'notify_set'		=> false,
+					'notify'			=> false,
+					'post_time' 		=> time(),
+					'forum_name'		=> $forum_name,
+					'enable_indexing'	=> true,
+					'force_approved_state'	=> true,
+					'force_visibility' => true,
+				);
+				$poll = array();
+
+				// Submit the post!
+				submit_post('post', $subject, $this->user->data['username'], POST_NORMAL, $poll, $data);
+
+				$message = $this->user->lang['APPLICATION_SEND'];
+				$message = $message . '<br /><br />' . sprintf($this->user->lang['RETURN_INDEX'], '<a href="' . append_sid("{$this->root_path}index.$this->php_ext") . '">', '</a>');
+				trigger_error($message);
+			}
 		}
+		$form_enctype = (@ini_get('file_uploads') == '0' || strtolower(@ini_get('file_uploads')) == 'off' || !$attachment_allowed) ? '' : ' enctype="multipart/form-data"';
 		$this->template->assign_vars(array(
-			'APPLICATION_POSITIONS' => $this->display_positions(explode("\n", $this->config['appform_positions'])),
+			'REALNAME'				=> isset($data['name']) ? $data['name'] : '',
+			'APPLICATION_POSITIONS' => $this->display_positions(explode("\n", $this->config['appform_positions']), $data['position']),
+			'WHY'					=> isset($data['why']) ? $data['why'] : '',
+			'S_FORM_ENCTYPE'		=> $form_enctype,
+			'S_ERROR'				=> (isset($error) && sizeof($error)) ? implode('<br />', $error) : '',
+			'S_ATTACH_BOX'			=> $attachment_allowed,
+			'S_ATTACH_REQ'			=> $attachment_req,
 		));
 
 		// Send all data to the template file
 		return $this->helper->render('appform_body.html', $this->user->lang('APPLICATION_PAGETITLE'));
 	}
 
-	private function display_positions($input_ary)
+	private function display_positions($input_ary, $selected)
 	{
 		// only accept arrays, no empty ones
 		if (!is_array($input_ary) || !sizeof($input_ary))
 		{
 			return;
 		}
+
+		// If selected isn't in the array, use first entry
+		if (!in_array($selected, $input_ary))
+		{
+			$selected = $input_ary[0];
+		}
+
 		$select = '';
 		foreach ($input_ary as $item)
 		{
-			$select .= '<option value="' . $item . '">' . $item . '</option>';
+			$item_selected = ($item == $selected) ? ' selected="selected"' : '';
+			$select .= '<option value="' . $item . '"' . $item_selected . '>' . $item . '</option>';
 		}
 		return $select;
 	}

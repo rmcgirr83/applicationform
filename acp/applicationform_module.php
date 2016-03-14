@@ -41,10 +41,12 @@ class applicationform_module
 		}
 
 		$template->assign_vars(array(
-			'ERROR'			=> isset($error) ? ((sizeof($error)) ? implode('<br />', $error) : '') : '',
-			'APPFORM_FORUM_ID' => $this->appform_forum_select($config['appform_forum_id']),
+			'ERROR'				=> isset($error) ? ((sizeof($error)) ? implode('<br />', $error) : '') : '',
+			'APPFORM_FORUM_ID'	=> $this->appform_forum_select($config['appform_forum_id']),
 			'APPFORM_POSITIONS'	=> $request->variable('appform_positions', $config['appform_positions'], true),
-			'APPFORUM_NRU'	=> $request->variable('appform_nru', $config['appform_nru']),
+			'APPFORUM_NRU'		=> $request->variable('appform_nru', $config['appform_nru']),
+			'APPFORM_ATTACHMENTS' => $request->variable('appform_attach', $config['appform_attach']),
+			'APPFORM_ATTACHMENT_REQ' => $request->variable('appform_attach_req', $config['appform_attach_req']),
 
 			'U_ACTION'			=> $this->u_action,
 		));
@@ -63,6 +65,8 @@ class applicationform_module
 		$config->set('appform_forum_id', $request->variable('appform_forum_id', 0));
 		$config->set('appform_positions', $request->variable('appform_positions', '', true));
 		$config->set('appform_nru', $request->variable('appform_nru', 0));
+		$config->set('appform_attach', $request->variable('appform_attach', 0));
+		$config->set('appform_attach_req', $request->variable('appform_attach_req', 0));
 	}
 
 	/**
