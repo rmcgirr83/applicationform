@@ -109,7 +109,6 @@ class main_controller
 		$attachment_allowed = $this->config['appform_attach'];
 		$attachment_req = $this->config['appform_attach_req'];
 
-
 		add_form_key('applicationform');
 		// we need the following pre-set for the dropdown of the positions
 		// in the template vars
