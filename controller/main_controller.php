@@ -147,7 +147,6 @@ class main_controller
 			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']), $this->request->variable('name', '', true), $data['position'], $message);
 
 			$message_parser->message = $apply_post;
-			//$message_parser->get_submitted_attachment_data();
 
 			$message_md5 = md5($message_parser->message);
 
