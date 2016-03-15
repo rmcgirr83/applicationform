@@ -109,6 +109,7 @@ class main_controller
 		$attachment_allowed = $this->config['appform_attach'];
 		$attachment_req = $this->config['appform_attach_req'];
 
+
 		add_form_key('applicationform');
 		// we need the following pre-set for the dropdown of the positions
 		// in the template vars
@@ -147,6 +148,7 @@ class main_controller
 			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']), $this->request->variable('name', '', true), $data['position'], $message);
 
 			$message_parser->message = $apply_post;
+			//$message_parser->get_submitted_attachment_data();
 
 			$message_md5 = md5($message_parser->message);
 
@@ -211,7 +213,7 @@ class main_controller
 			'WHY'					=> isset($data['why']) ? $data['why'] : '',
 			'S_FORM_ENCTYPE'		=> $form_enctype,
 			'S_ERROR'				=> (isset($error) && sizeof($error)) ? implode('<br />', $error) : '',
-			'S_ATTACH_BOX'			=> $attachment_allowed,
+			'S_ATTACH_BOX'			=> ($attachment_allowed && $form_enctype) ? true : false,
 			'S_ATTACH_REQ'			=> $attachment_req,
 		));
 
