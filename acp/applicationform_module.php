@@ -19,12 +19,12 @@ class applicationform_module
 		global $db, $config, $request, $template, $user, $phpbb_container;
 
 		$user->add_lang_ext('rmcgirr83/applicationform', 'acp_applicationform');
-		
+
 		$this->page_title = $user->lang['ACP_APPLICATIONFORM_SETTINGS'];
 		$this->tpl_name = 'applicationform_body';
-		
+
 		$log = $phpbb_container->get('log');
-		
+
 		add_form_key('appform');
 
 		if ($request->is_set_post('submit'))
@@ -40,7 +40,7 @@ class applicationform_module
 			}
 			// Set the options the user configured
 			$this->set_options();
-			
+
 			$log->add('admin', $user->data['user_id'], $user->ip, 'LOG_APPFORM_CONFIG_SAVED');
 
 			trigger_error($user->lang['APPFORM_SETTINGS_SUCCESS'] . adm_back_link($this->u_action));
