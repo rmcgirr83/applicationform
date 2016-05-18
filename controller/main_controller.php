@@ -47,14 +47,14 @@ class main_controller
 	/**
 	* Constructor
 	*
-	* @param \phpbb\config\config               $config         	Config object
-	* @param \phpbb\db\driver\driver			$db					Database object
-	* @param \phpbb\controller\helper           $helper         	Controller helper object
-	* @param \phpbb\request\request				$request			Request object
-	* @param \phpbb\template\template           $template       	Template object
-	* @param \phpbb\user                        $user           	User object
-	* @param string                             $root_path      	phpBB root path
-	* @param string                             $php_ext        	phpEx
+	* @param \phpbb\config\config               $config         		Config object
+	* @param \phpbb\db\driver\driver			$db						Database object
+	* @param \phpbb\controller\helper           $helper         		Controller helper object
+	* @param \phpbb\request\request				$request				Request object
+	* @param \phpbb\template\template           $template       		Template object
+	* @param \phpbb\user                        $user           		User object
+	* @param string                             $root_path      		phpBB root path
+	* @param string                             $php_ext        		phpEx
 	* @param \rmcgirr83\applicationform\core\applicationform	$functions	functions to be used by class
 	* @access public
 	*/
@@ -147,7 +147,6 @@ class main_controller
 			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']), $this->request->variable('name', '', true), $data['position'], $message);
 
 			$message_parser->message = $apply_post;
-			//$message_parser->get_submitted_attachment_data();
 
 			$message_md5 = md5($message_parser->message);
 
@@ -188,7 +187,7 @@ class main_controller
 					'post_edit_locked'	=> 0,
 					'topic_title'		=> $subject,
 					'notify_set'		=> false,
-					'notify'			=> false,
+					'notify'			=> true,
 					'post_time' 		=> time(),
 					'forum_name'		=> $forum_name,
 					'enable_indexing'	=> true,

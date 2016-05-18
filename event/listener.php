@@ -30,9 +30,6 @@ class listener implements EventSubscriberInterface
 	/** @var \phpbb\user */
 	protected $user;
 
-	/** @var \phpbb\auth\auth */
-	protected $auth;
-
 	/* @var \rmcgirr83\applicationform\core\applicationform */
 	protected $functions;
 
@@ -41,14 +38,12 @@ class listener implements EventSubscriberInterface
 		\phpbb\controller\helper $helper,
 		\phpbb\template\template $template,
 		\phpbb\user $user,
-		\phpbb\auth\auth $auth,
 		\rmcgirr83\applicationform\core\applicationform $functions)
 	{
 		$this->config = $config;
 		$this->helper = $helper;
 		$this->template = $template;
 		$this->user = $user;
-		$this->auth = $auth;
 		$this->functions = $functions;
 	}
 
@@ -66,7 +61,7 @@ class listener implements EventSubscriberInterface
 		if ((!$this->config['appform_nru'] && ($nru_group_id === (int) $this->user->data['group_id'])) || $this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS)
 		{
 			$this->template->assign_var('U_APP_FORM', false);
-			return;
+			return false;
 		}
 
 		$this->user->add_lang_ext('rmcgirr83/applicationform', 'common');
