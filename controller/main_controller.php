@@ -19,7 +19,7 @@ class main_controller
 {
 	/** @var \phpbb\auth\auth */
 	protected $auth;
-	
+
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -196,7 +196,7 @@ class main_controller
 			}
 		}
 		$form_enctype = (@ini_get('file_uploads') == '0' || strtolower(@ini_get('file_uploads')) == 'off') ? '' : ' enctype="multipart/form-data"';
-				
+
 		$this->template->assign_vars(array(
 			'REALNAME'				=> isset($data['name']) ? $data['name'] : '',
 			'APPLICATION_POSITIONS' => $this->display_positions(explode("\n", $this->config['appform_positions']), $data['position']),
