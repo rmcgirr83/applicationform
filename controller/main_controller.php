@@ -17,6 +17,9 @@ use phpbb\exception\http_exception;
 */
 class main_controller
 {
+	/** @var \phpbb\auth\auth */
+	protected $auth;
+	
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -44,21 +47,8 @@ class main_controller
 	/* @var \rmcgirr83\applicationform\core\applicationform */
 	protected $functions;
 
-	/**
-	* Constructor
-	*
-	* @param \phpbb\config\config               $config         		Config object
-	* @param \phpbb\db\driver\driver			$db						Database object
-	* @param \phpbb\controller\helper           $helper         		Controller helper object
-	* @param \phpbb\request\request				$request				Request object
-	* @param \phpbb\template\template           $template       		Template object
-	* @param \phpbb\user                        $user           		User object
-	* @param string                             $root_path      		phpBB root path
-	* @param string                             $php_ext        		phpEx
-	* @param \rmcgirr83\applicationform\core\applicationform	$functions	functions to be used by class
-	* @access public
-	*/
 	public function __construct(
+			\phpbb\auth\auth $auth,
 			\phpbb\config\config $config,
 			\phpbb\db\driver\driver_interface $db,
 			\phpbb\controller\helper $helper,
@@ -69,6 +59,7 @@ class main_controller
 			$php_ext,
 			\rmcgirr83\applicationform\core\applicationform $functions)
 	{
+		$this->auth = $auth;
 		$this->config = $config;
 		$this->db = $db;
 		$this->helper = $helper;
@@ -106,7 +97,7 @@ class main_controller
 		$this->user->add_lang('posting');
 		$this->user->add_lang_ext('rmcgirr83/applicationform', 'application');
 
-		$attachment_allowed = $this->config['appform_attach'];
+		$attachment_allowed = ($this->auth->acl_get('f_attach', (int) $this->config['appform_forum_id']) && $this->config['allow_attachments'] && $this->config['appform_attach']) ? true : false;
 		$attachment_req = $this->config['appform_attach_req'];
 
 		add_form_key('applicationform');
@@ -137,7 +128,7 @@ class main_controller
 			{
 				$error[] = $this->user->lang['APP_NOT_COMPLETELY_FILLED'];
 			}
-			if (empty($message_parser->attachment_data) && $attachment_req)
+			if (empty($message_parser->attachment_data) && $attachment_req && $attachment_allowed)
 			{
 				$error[] = $this->user->lang['APPLICATION_REQUIRES_ATTACHMENT'];
 			}
@@ -204,7 +195,8 @@ class main_controller
 				trigger_error($message);
 			}
 		}
-		$form_enctype = (@ini_get('file_uploads') == '0' || strtolower(@ini_get('file_uploads')) == 'off' || !$attachment_allowed) ? '' : ' enctype="multipart/form-data"';
+		$form_enctype = (@ini_get('file_uploads') == '0' || strtolower(@ini_get('file_uploads')) == 'off') ? '' : ' enctype="multipart/form-data"';
+				
 		$this->template->assign_vars(array(
 			'REALNAME'				=> isset($data['name']) ? $data['name'] : '',
 			'APPLICATION_POSITIONS' => $this->display_positions(explode("\n", $this->config['appform_positions']), $data['position']),
