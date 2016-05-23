@@ -63,8 +63,11 @@ class listener implements EventSubscriberInterface
 			$this->template->assign_var('U_APP_FORM', false);
 			return false;
 		}
-
+		$version = phpbb_version_compare($this->config['version'], '3.2.0-b2', '>=');
 		$this->user->add_lang_ext('rmcgirr83/applicationform', 'common');
-		$this->template->assign_var('U_APP_FORM', $this->helper->route('rmcgirr83_applicationform_displayform'));
+		$this->template->assign_vars(array(
+			'U_APP_FORM' => $this->helper->route('rmcgirr83_applicationform_displayform'),
+			'S_FORUM_VERSION' => $version,
+		));
 	}
 }

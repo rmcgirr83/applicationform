@@ -1,3 +1,7 @@
 <!-- IF U_APP_FORM -->
-		<li class="small-icon icon-members"><a href="{U_APP_FORM}" title="{L_APPLICATION_FORM_EXPLAIN}" role="menuitem">{L_APPLICATION_FORM}</a></li>
+		<li<!-- IF !S_FORUM_VERSION --> class="small-icon icon-members"<!-- ENDIF -->>
+			<a href="{U_APP_FORM}" title="{L_APPLICATION_FORM_EXPLAIN}" role="menuitem">
+			<!-- IF S_FORUM_VERSION --><i class="icon fa-forumbee fa-fw" aria-hidden="true"></i><!-- ENDIF --><span>{L_APPLICATION_FORM}</span>
+			</a>
+		</li>
 <!-- ENDIF -->

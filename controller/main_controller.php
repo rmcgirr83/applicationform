@@ -135,7 +135,20 @@ class main_controller
 			// Setting the variables we need to submit the post to the forum where all the applications come in
 			$message = censor_text(trim('[quote] ' . $data['why'] . '[/quote]'));
 			$subject	= sprintf($this->user->lang['APPLICATION_SUBJECT'], $this->user->data['username']);
-			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']), $this->request->variable('name', '', true), $data['position'], $message);
+
+			// we can't use get_username_string in 3.2
+			if (phpbb_version_compare($this->config['version'], '3.2.0-b2', '>='))
+			{
+				$url = $this->root_path . 'memberlist.' . $this->php_ext . '?mode=viewprofile&u=' . $this->user->data['user_id'];
+				$color = $this->user->data['user_colour'];
+				$user_name = $this->user->data['is_registered'] ? '[url=' . $url . '][color=#' . $color . ']' . $this->user->data['username'] . '[/color][/url]' : $data['username'];
+			}
+			else
+			{
+				$user_name = $this->user->data['is_registered'] ? get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']) : $data['username'];
+			}			
+
+			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], $user_name, $this->request->variable('name', '', true), $data['position'], $message);
 
 			$message_parser->message = $apply_post;
 
