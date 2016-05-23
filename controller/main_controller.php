@@ -146,7 +146,7 @@ class main_controller
 			else
 			{
 				$user_name = $this->user->data['is_registered'] ? get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']) : $data['username'];
-			}			
+			}
 
 			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], $user_name, $this->request->variable('name', '', true), $data['position'], $message);
 
