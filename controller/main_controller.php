@@ -17,9 +17,6 @@ use phpbb\exception\http_exception;
 */
 class main_controller
 {
-	/** @var \phpbb\auth\auth */
-	protected $auth;
-
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -48,7 +45,6 @@ class main_controller
 	protected $functions;
 
 	public function __construct(
-			\phpbb\auth\auth $auth,
 			\phpbb\config\config $config,
 			\phpbb\db\driver\driver_interface $db,
 			\phpbb\controller\helper $helper,
@@ -59,7 +55,6 @@ class main_controller
 			$php_ext,
 			\rmcgirr83\applicationform\core\applicationform $functions)
 	{
-		$this->auth = $auth;
 		$this->config = $config;
 		$this->db = $db;
 		$this->helper = $helper;
@@ -97,7 +92,7 @@ class main_controller
 		$this->user->add_lang('posting');
 		$this->user->add_lang_ext('rmcgirr83/applicationform', 'application');
 
-		$attachment_allowed = ($this->auth->acl_get('f_attach', (int) $this->config['appform_forum_id']) && $this->config['allow_attachments'] && $this->config['appform_attach']) ? true : false;
+		$attachment_allowed = ($this->config['allow_attachments'] && $this->config['appform_attach']) ? true : false;
 		$attachment_req = $this->config['appform_attach_req'];
 
 		add_form_key('applicationform');
@@ -136,17 +131,9 @@ class main_controller
 			$message = censor_text(trim('[quote] ' . $data['why'] . '[/quote]'));
 			$subject	= sprintf($this->user->lang['APPLICATION_SUBJECT'], $this->user->data['username']);
 
-			// we can't use get_username_string in 3.2
-			if (phpbb_version_compare($this->config['version'], '3.2.0-b2', '>='))
-			{
-				$url = $this->root_path . 'memberlist.' . $this->php_ext . '?mode=viewprofile&u=' . $this->user->data['user_id'];
-				$color = $this->user->data['user_colour'];
-				$user_name = $this->user->data['is_registered'] ? '[url=' . $url . '][color=#' . $color . ']' . $this->user->data['username'] . '[/color][/url]' : $data['username'];
-			}
-			else
-			{
-				$user_name = $this->user->data['is_registered'] ? get_username_string('full', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']) : $data['username'];
-			}
+			$url = generate_board_url() . '/memberlist.' . $this->php_ext . '?mode=viewprofile&u=' . $this->user->data['user_id'];
+			$color = $this->user->data['user_colour'];
+			$user_name = $this->user->data['is_registered'] ? '[url=' . $url . '][color=#' . $color . ']' . $this->user->data['username'] . '[/color][/url]' : $data['username'];
 
 			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], $user_name, $this->request->variable('name', '', true), $data['position'], $message);
 

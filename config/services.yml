@@ -2,7 +2,6 @@ services:
     rmcgirr83.applicationform.main.controller:
         class: rmcgirr83\applicationform\controller\main_controller
         arguments:
-            - '@auth'
             - '@config'
             - '@dbal.conn'
             - '@controller.helper'
