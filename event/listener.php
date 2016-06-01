@@ -31,20 +31,20 @@ class listener implements EventSubscriberInterface
 	protected $user;
 
 	/* @var \rmcgirr83\applicationform\core\applicationform */
-	protected $functions;
+	protected $applicationform;
 
 	public function __construct(
 		\phpbb\config\config $config,
 		\phpbb\controller\helper $helper,
 		\phpbb\template\template $template,
 		\phpbb\user $user,
-		\rmcgirr83\applicationform\core\applicationform $functions)
+		\rmcgirr83\applicationform\core\applicationform $applicationform)
 	{
 		$this->config = $config;
 		$this->helper = $helper;
 		$this->template = $template;
 		$this->user = $user;
-		$this->functions = $functions;
+		$this->applicationform = $applicationform;
 	}
 
 	static public function getSubscribedEvents()
@@ -56,7 +56,7 @@ class listener implements EventSubscriberInterface
 
 	public function page_header($event)
 	{
-		$nru_group_id = $this->functions->getnruid();
+		$nru_group_id = $this->applicationform->getnruid();
 
 		if ((!$this->config['appform_nru'] && ($nru_group_id === (int) $this->user->data['group_id'])) || $this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS)
 		{

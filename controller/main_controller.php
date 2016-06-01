@@ -42,7 +42,7 @@ class main_controller
 	protected $php_ext;
 
 	/* @var \rmcgirr83\applicationform\core\applicationform */
-	protected $functions;
+	protected $applicationform;
 
 	public function __construct(
 			\phpbb\config\config $config,
@@ -53,7 +53,7 @@ class main_controller
 			\phpbb\user $user,
 			$root_path,
 			$php_ext,
-			\rmcgirr83\applicationform\core\applicationform $functions)
+			\rmcgirr83\applicationform\core\applicationform $applicationform)
 	{
 		$this->config = $config;
 		$this->db = $db;
@@ -63,7 +63,7 @@ class main_controller
 		$this->user = $user;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
-		$this->functions = $functions;
+		$this->applicationform = $applicationform;
 
 		if (!function_exists('submit_post'))
 		{
@@ -82,7 +82,7 @@ class main_controller
 	 */
 	public function displayform()
 	{
-		$nru_group_id = $this->functions->getnruid();
+		$nru_group_id = $this->applicationform->getnruid();
 
 		if ($this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS || (!$this->config['appform_nru'] && ($nru_group_id === (int) $this->user->data['group_id'])))
 		{
@@ -96,20 +96,15 @@ class main_controller
 		$attachment_req = $this->config['appform_attach_req'];
 
 		add_form_key('applicationform');
-		// we need the following pre-set for the dropdown of the positions
-		// in the template vars
+
 		$data = array(
-			'position'	=> $this->request->variable('position', '', true),
+			'name'			=> $this->request->variable('name', '', true),
+			'why'			=> $this->request->variable('why', '', true),
+			'position'		=> $this->request->variable('position', '', true),
 		);
 
 		if ($this->request->is_set_post('submit'))
 		{
-			// our data array
-			$data = array(
-				'name'			=> $this->request->variable('name', '', true),
-				'why'			=> $this->request->variable('why', '', true),
-				'position'		=> $this->request->variable('position', '', true),
-			);
 			$message_parser = new \parse_message();
 			$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
 
@@ -119,14 +114,17 @@ class main_controller
 			{
 				$error[] = $this->user->lang['FORM_INVALID'];
 			}
+
 			if ($data['name'] === '' || $data['why'] === '')
 			{
 				$error[] = $this->user->lang['APP_NOT_COMPLETELY_FILLED'];
 			}
+
 			if (empty($message_parser->attachment_data) && $attachment_req && $attachment_allowed)
 			{
 				$error[] = $this->user->lang['APPLICATION_REQUIRES_ATTACHMENT'];
 			}
+
 			// Setting the variables we need to submit the post to the forum where all the applications come in
 			$message = censor_text(trim('[quote] ' . $data['why'] . '[/quote]'));
 			$subject	= sprintf($this->user->lang['APPLICATION_SUBJECT'], $this->user->data['username']);
@@ -148,7 +146,7 @@ class main_controller
 			$message_parser->parse(true, true, true, true, false, true, true);
 
 			// no errors, let's proceed
-			if ($this->request->is_set_post('submit') && !sizeof($error))
+			if (!sizeof($error))
 			{
 				$sql = 'SELECT forum_name
 					FROM ' . FORUMS_TABLE . '
@@ -185,6 +183,7 @@ class main_controller
 					'force_approved_state'	=> true,
 					'force_visibility' => true,
 				);
+
 				$poll = array();
 
 				// Submit the post!
