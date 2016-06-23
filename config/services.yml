@@ -11,6 +11,7 @@ services:
             - '%core.root_path%'
             - '%core.php_ext%'
             - '@rmcgirr83.applicationform.applicationform'
+            - '@?rmcgirr83.topicdescription.listener'
     rmcgirr83.applicationform.listener:
         class: rmcgirr83\applicationform\event\listener
         arguments:

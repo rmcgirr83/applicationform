@@ -53,7 +53,8 @@ class main_controller
 			\phpbb\user $user,
 			$root_path,
 			$php_ext,
-			\rmcgirr83\applicationform\core\applicationform $applicationform)
+			\rmcgirr83\applicationform\core\applicationform $applicationform,
+			\rmcgirr83\topicdescription\event\listener $topicdescription = null)
 	{
 		$this->config = $config;
 		$this->db = $db;
@@ -64,6 +65,7 @@ class main_controller
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->applicationform = $applicationform;
+	$this->topicdescription = $topicdescription;
 
 		if (!function_exists('submit_post'))
 		{
@@ -105,6 +107,12 @@ class main_controller
 
 		if ($this->request->is_set_post('submit'))
 		{
+			$error = array();
+			// Test if form key is valid
+			if (!check_form_key('applicationform'))
+			{
+				$error[] = $this->user->lang['FORM_INVALID'];
+			}
 			$message_parser = new \parse_message();
 			$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
 
@@ -185,7 +193,10 @@ class main_controller
 				);
 
 				$poll = array();
-
+				if ($this->topicdescription !== null)
+				{
+					$data['topic_desc'] = '';
+				}
 				// Submit the post!
 				submit_post('post', $subject, $this->user->data['username'], POST_NORMAL, $poll, $data);
 
