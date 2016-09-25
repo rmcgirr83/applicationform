@@ -65,7 +65,7 @@ class main_controller
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->applicationform = $applicationform;
-	$this->topicdescription = $topicdescription;
+		$this->topicdescription = $topicdescription;
 
 		if (!function_exists('submit_post'))
 		{
