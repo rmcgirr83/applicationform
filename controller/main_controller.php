@@ -84,9 +84,9 @@ class main_controller
 	 */
 	public function displayform()
 	{
-		$nru_group_id = $this->applicationform->getnruid();
+		$in_nru_group = $this->applicationform->getnruid();
 
-		if ($this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS || (!$this->config['appform_nru'] && ($nru_group_id === (int) $this->user->data['group_id'])))
+		if ($this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS || (!$this->config['appform_nru'] && $in_nru_group))
 		{
 			throw new http_exception(401, 'NOT_AUTHORISED');
 		}
@@ -116,13 +116,6 @@ class main_controller
 			$message_parser = new \parse_message();
 			$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
 
-			$error = array();
-			// Test if form key is valid
-			if (!check_form_key('applicationform'))
-			{
-				$error[] = $this->user->lang['FORM_INVALID'];
-			}
-
 			if ($data['name'] === '' || $data['why'] === '')
 			{
 				$error[] = $this->user->lang['APP_NOT_COMPLETELY_FILLED'];
@@ -135,13 +128,13 @@ class main_controller
 
 			// Setting the variables we need to submit the post to the forum where all the applications come in
 			$message = censor_text(trim('[quote] ' . $data['why'] . '[/quote]'));
-			$subject	= sprintf($this->user->lang['APPLICATION_SUBJECT'], $this->user->data['username']);
+			$subject	= $this->user->lang('APPLICATION_SUBJECT', $this->user->data['username']);
 
 			$url = generate_board_url() . '/memberlist.' . $this->php_ext . '?mode=viewprofile&u=' . $this->user->data['user_id'];
 			$color = $this->user->data['user_colour'];
 			$user_name = $this->user->data['is_registered'] ? '[url=' . $url . '][color=#' . $color . ']' . $this->user->data['username'] . '[/color][/url]' : $data['username'];
 
-			$apply_post	= sprintf($this->user->lang['APPLICATION_MESSAGE'], $user_name, $this->request->variable('name', '', true), $data['position'], $message);
+			$apply_post	= $this->user->lang('APPLICATION_MESSAGE', $user_name, $this->request->variable('name', '', true), $data['position'], $message);
 
 			$message_parser->message = $apply_post;
 

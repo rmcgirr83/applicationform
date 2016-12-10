@@ -26,3 +26,4 @@ services:
         class: rmcgirr83\applicationform\core\applicationform
         arguments:
             - '@dbal.conn'
+            - '@user'

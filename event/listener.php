@@ -56,9 +56,9 @@ class listener implements EventSubscriberInterface
 
 	public function page_header($event)
 	{
-		$nru_group_id = $this->applicationform->getnruid();
+		$in_nru_group = $this->applicationform->getnruid();
 
-		if ((!$this->config['appform_nru'] && ($nru_group_id === (int) $this->user->data['group_id'])) || $this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS)
+		if ((!$this->config['appform_nru'] && $in_nru_group) || $this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS)
 		{
 			$this->template->assign_var('U_APP_FORM', false);
 			return false;
