@@ -28,7 +28,7 @@ class applicationform
 	/**
 	 * Get nru group id
 	 *
-	 * @return int group id
+	 * @return true or false
 	 */
 
 	public function getnruid()
