@@ -265,6 +265,7 @@ class main_controller
 			'S_ERROR'				=> (isset($error) && sizeof($error)) ? implode('<br />', $error) : '',
 			'S_ATTACH_BOX'			=> ($attachment_allowed && $form_enctype) ? true : false,
 			'S_ATTACH_REQ'			=> $attachment_req,
+			'S_EMAIL_NEEDED'		=> $this->user->data['user_id'] == ANONYMOUS ? true : false,
 		));
 
 		// Send all data to the template file

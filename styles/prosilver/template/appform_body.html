@@ -11,12 +11,10 @@
 					<dt><label for="name">{L_APPLICATION_REALNAME}{L_COLON}*</label></dt>
 					<dd><input type="text" name="name" size="25" class="inputbox autowidth" value="{REALNAME}" /></dd>
 				</dl>
-				<!-- IF not APPLICATION_EMAIL -->
 				<dl>
 					<dt><label for="email">{L_EMAIL}{L_COLON}*</label></dt>
-					<dd><input type="text" name="email" size="25" maxlength="100" class="inputbox autowidth" value="{APPLICATION_EMAIL}" /></dd>
+					<dd><input type="text" name="email" size="25" maxlength="100" class="inputbox autowidth" value="{APPLICATION_EMAIL}" <!-- IF not S_EMAIL_NEEDED -->disabled<!-- ENDIF --> /></dd>
 				</dl>
-				<!-- ENDIF -->
 				<!-- IF APPLICATION_POSITIONS -->
 				<dl>
 					<dt><label for="postion">{L_APPLICATION_POSITION}{L_COLON}</label></dt>

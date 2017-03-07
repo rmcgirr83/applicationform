@@ -36,7 +36,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'APPLICATION_SUBJECT'			=> 'Application from %s',
-	'APPLICATION_MESSAGE'			=> 'A user, [b]%1$s[/b], has applied with the following information using the application form.' . "\n" . '[b]Real name[/b]: %2$s' . "\n" . '[b]Applying for[/b]: %3$s' . "\n" . '[b]Email:[/b] %4$s'. "\n" . '[b]Reason for applying:[/b] %5$s',
+	'APPLICATION_MESSAGE'			=> 'A user, [b]%1$s[/b], has applied with the following information using the application form.' . "\n" . '[b]Real name[/b]: %2$s' . "\n" . '[b]Email:[/b] %3$s'. "\n" . '[b]Applying for[/b]: %4$s' . "\n" . '[b]Reason for applying:[/b] %5$s',
 	'APPLICATION_SEND'				=> 'Your application has been sent to the administrators of this board. They’ll decide upon your application in the coming days.',
 	'APPLICATION_PAGETITLE'			=> 'Application form',
 
