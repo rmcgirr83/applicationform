@@ -44,6 +44,9 @@ class main_controller
 	/* @var \rmcgirr83\applicationform\core\applicationform */
 	protected $applicationform;
 
+	/** @var \phpbb\captcha\factory */
+	protected $captcha_factory;	
+
 	public function __construct(
 			\phpbb\config\config $config,
 			\phpbb\db\driver\driver_interface $db,
@@ -54,6 +57,7 @@ class main_controller
 			$root_path,
 			$php_ext,
 			\rmcgirr83\applicationform\core\applicationform $applicationform,
+			\phpbb\captcha\factory $captcha_factory,
 			\rmcgirr83\topicdescription\event\listener $topicdescription = null)
 	{
 		$this->config = $config;
@@ -65,12 +69,17 @@ class main_controller
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->applicationform = $applicationform;
+		$this->captcha_factory = $captcha_factory;
 		$this->topicdescription = $topicdescription;
 
 		if (!function_exists('submit_post'))
 		{
 			include($this->root_path . 'includes/functions_posting.' . $this->php_ext);
 		}
+		if (!function_exists('validate_data'))
+		{
+			include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+		}		
 		if (!class_exists('parse_message'))
 		{
 			include($this->root_path . 'includes/message_parser.' . $this->php_ext);
@@ -86,12 +95,14 @@ class main_controller
 	{
 		$in_nru_group = $this->applicationform->getnruid();
 
-		if ($this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS || (!$this->config['appform_nru'] && $in_nru_group))
+		$allow_guest = (!$this->config['appform_guest'] && $this->user->data['user_id'] == ANONYMOUS) ? false : true;
+		$allow_nru = (!$this->config['appform_nru'] && $in_nru_group) ? false : true;
+		if ($this->user->data['is_bot'] || !$allow_guest || !$allow_nru)
 		{
 			throw new http_exception(401, 'NOT_AUTHORISED');
 		}
 
-		$this->user->add_lang('posting');
+		$this->user->add_lang('ucp');
 		$this->user->add_lang_ext('rmcgirr83/applicationform', 'application');
 
 		$attachment_allowed = ($this->config['allow_attachments'] && $this->config['appform_attach']) ? true : false;
@@ -100,23 +111,44 @@ class main_controller
 		add_form_key('applicationform');
 
 		$data = array(
-			'name'			=> $this->request->variable('name', '', true),
+			'username'		=> ($this->user->data['user_id'] != ANONYMOUS) ?  $this->user->data['username'] : $this->request->variable('name', '', true),
+			'email'			=> ($this->user->data['user_id'] != ANONYMOUS) ? $this->user->data['user_email'] : strtolower($this->request->variable('email', '')),
 			'why'			=> $this->request->variable('why', '', true),
 			'position'		=> $this->request->variable('position', '', true),
 		);
 
+		// Visual Confirmation - The CAPTCHA kicks in here
+		if (!$this->user->data['is_registered'])
+		{
+			$captcha = $this->captcha_factory->get_instance($this->config['captcha_plugin']);
+			$captcha->init((CONFIRM_REG));
+		}		
+
 		if ($this->request->is_set_post('submit'))
 		{
 			$error = array();
+			if (!$this->user->data['is_registered'])
+			{
+				$error = validate_data($data, array(
+					'username'			=> array(
+						array('string', false, $this->config['min_name_chars'], $this->config['max_name_chars']),
+						array('username', '')),
+					'email'			=> array(
+						array('string', false, 6, 60),
+						array('user_email')),
+				));
+			}
+
 			// Test if form key is valid
 			if (!check_form_key('applicationform'))
 			{
 				$error[] = $this->user->lang['FORM_INVALID'];
 			}
+
 			$message_parser = new \parse_message();
 			$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
 
-			if ($data['name'] === '' || $data['why'] === '')
+			if ($data['why'] === '')
 			{
 				$error[] = $this->user->lang['APP_NOT_COMPLETELY_FILLED'];
 			}
@@ -126,15 +158,33 @@ class main_controller
 				$error[] = $this->user->lang['APPLICATION_REQUIRES_ATTACHMENT'];
 			}
 
+			// Replace "error" strings with their real, localised form
+			$error = array_map(array($this->user, 'lang'), $error);
+
+			// CAPTCHA check
+			if (!$this->user->data['is_registered'] && !$captcha->is_solved())
+			{
+				$vc_response = $captcha->validate($data);
+				if ($vc_response !== false)
+				{
+					$error[] = $vc_response;
+				}
+
+				if ($this->config['max_reg_attempts'] && $captcha->get_attempt_count() > $this->config['max_reg_attempts'])
+				{
+					$error[] = $this->user->lang['TOO_MANY_REGISTERS'];
+				}
+			}
+
 			// Setting the variables we need to submit the post to the forum where all the applications come in
 			$message = censor_text(trim('[quote] ' . $data['why'] . '[/quote]'));
 			$subject	= $this->user->lang('APPLICATION_SUBJECT', $this->user->data['username']);
 
 			$url = generate_board_url() . '/memberlist.' . $this->php_ext . '?mode=viewprofile&u=' . $this->user->data['user_id'];
-			$color = $this->user->data['user_colour'];
-			$user_name = $this->user->data['is_registered'] ? '[url=' . $url . '][color=#' . $color . ']' . $this->user->data['username'] . '[/color][/url]' : $data['username'];
+			$color = !empty($this->user->data['user_colour']) ? '[color=#' . $this->user->data['user_colour'] . ']' . $this->user->data['username'] . '[/color]' : $this->user->data['username'];
+			$user_name = $this->user->data['is_registered'] ? '[url=' . $url . ']' . $color . '[/url]' : $data['username'];
 
-			$apply_post	= $this->user->lang('APPLICATION_MESSAGE', $user_name, $this->request->variable('name', '', true), $data['position'], $message);
+			$apply_post	= $this->user->lang('APPLICATION_MESSAGE', $user_name, $this->request->variable('name', '', true), $data['email'], $data['position'], $message);
 
 			$message_parser->message = $apply_post;
 
@@ -199,11 +249,18 @@ class main_controller
 			}
 		}
 		$form_enctype = (@ini_get('file_uploads') == '0' || strtolower(@ini_get('file_uploads')) == 'off') ? '' : ' enctype="multipart/form-data"';
-
+		// Visual Confirmation - Show images
+		if (!$this->user->data['is_registered'])
+		{
+			$this->template->assign_vars(array(
+				'CAPTCHA_TEMPLATE'		=> $captcha->get_template(),
+			));
+		}
 		$this->template->assign_vars(array(
-			'REALNAME'				=> isset($data['name']) ? $data['name'] : '',
+			'REALNAME'				=> $data['username'],
 			'APPLICATION_POSITIONS' => $this->display_positions(explode("\n", $this->config['appform_positions']), $data['position']),
-			'WHY'					=> isset($data['why']) ? $data['why'] : '',
+			'APPLICATION_EMAIL'		=> $data['email'],
+			'WHY'					=> $data['why'],
 			'S_FORM_ENCTYPE'		=> $form_enctype,
 			'S_ERROR'				=> (isset($error) && sizeof($error)) ? implode('<br />', $error) : '',
 			'S_ATTACH_BOX'			=> ($attachment_allowed && $form_enctype) ? true : false,
@@ -219,7 +276,7 @@ class main_controller
 		// only accept arrays, no empty ones
 		if (!is_array($input_ary) || !sizeof($input_ary))
 		{
-			return;
+			return false;
 		}
 
 		// If selected isn't in the array, use first entry

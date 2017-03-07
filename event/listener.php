@@ -58,7 +58,9 @@ class listener implements EventSubscriberInterface
 	{
 		$in_nru_group = $this->applicationform->getnruid();
 
-		if ((!$this->config['appform_nru'] && $in_nru_group) || $this->user->data['is_bot'] || $this->user->data['user_id'] == ANONYMOUS)
+		$allow_guest = (!$this->config['appform_guest'] && $this->user->data['user_id'] == ANONYMOUS) ? false : true;
+		$allow_nru = (!$this->config['appform_nru'] && $in_nru_group) ? false : true;
+		if ($this->user->data['is_bot'] || !$allow_guest || !$allow_nru)
 		{
 			$this->template->assign_var('U_APP_FORM', false);
 			return false;

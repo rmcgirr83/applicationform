@@ -29,28 +29,36 @@ class applicationform_module
 
 		if ($request->is_set_post('submit'))
 		{
+			$error = array();
+
 			// Test if form key is valid
 			if (!check_form_key('appform'))
 			{
-				trigger_error($user->lang['FORM_INVALID'] . adm_back_link($this->u_action), E_USER_WARNING);
+				$error[] = $user->lang('FORM_INVALID');
 			}
+
 			if ($request->variable('appform_positions', '', true) === '')
 			{
-				trigger_error($user->lang['APPFORM_MUST_HAVE_POSITIONS'] . adm_back_link($this->u_action), E_USER_WARNING);
+				$error[] = $user->lang('APPFORM_MUST_HAVE_POSITIONS');
 			}
+
 			// Set the options the user configured
-			$this->set_options();
+			if (!sizeof($error))
+			{
+				$this->set_options();
 
-			$log->add('admin', $user->data['user_id'], $user->ip, 'LOG_APPFORM_CONFIG_SAVED');
+				$log->add('admin', $user->data['user_id'], $user->ip, 'LOG_APPFORM_CONFIG_SAVED');
 
-			trigger_error($user->lang['APPFORM_SETTINGS_SUCCESS'] . adm_back_link($this->u_action));
+				trigger_error($user->lang['APPFORM_SETTINGS_SUCCESS'] . adm_back_link($this->u_action));
+			}
 		}
 
 		$template->assign_vars(array(
 			'ERROR'				=> isset($error) ? ((sizeof($error)) ? implode('<br />', $error) : '') : '',
 			'APPFORM_FORUM_ID'	=> $this->appform_forum_select($config['appform_forum_id']),
 			'APPFORM_POSITIONS'	=> $request->variable('appform_positions', $config['appform_positions'], true),
-			'APPFORUM_NRU'		=> $request->variable('appform_nru', $config['appform_nru']),
+			'APPFORM_GUEST'		=> $request->variable('appform_guest', $config['appform_guest'], true),
+			'APPFORM_NRU'		=> $request->variable('appform_nru', $config['appform_nru']),
 			'APPFORM_ATTACHMENTS' => $request->variable('appform_attach', $config['appform_attach']),
 			'APPFORM_ATTACHMENT_REQ' => $request->variable('appform_attach_req', $config['appform_attach_req']),
 
@@ -70,6 +78,7 @@ class applicationform_module
 
 		$config->set('appform_forum_id', $request->variable('appform_forum_id', 0));
 		$config->set('appform_positions', $request->variable('appform_positions', '', true));
+		$config->set('appform_guest', $request->variable('appform_guest', 0));
 		$config->set('appform_nru', $request->variable('appform_nru', 0));
 		$config->set('appform_attach', $request->variable('appform_attach', 0));
 		$config->set('appform_attach_req', $request->variable('appform_attach_req', 0));

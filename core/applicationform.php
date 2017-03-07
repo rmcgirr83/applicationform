@@ -19,7 +19,8 @@ class applicationform
 	protected $user;
 
 	public function __construct(
-		\phpbb\db\driver\driver_interface $db, \phpbb\user $user)
+		\phpbb\db\driver\driver_interface $db, 
+		\phpbb\user $user)
 	{
 		$this->db = $db;
 		$this->user = $user;

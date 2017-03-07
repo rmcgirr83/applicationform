@@ -9,12 +9,20 @@
 				<!-- IF S_ERROR --><dl><dd class="error">{S_ERROR}</dd></dl><!-- ENDIF -->
 				<dl>
 					<dt><label for="name">{L_APPLICATION_REALNAME}{L_COLON}*</label></dt>
-					<dd><input type="text" name="name" class="inputbox autowidth" value="{REALNAME}" /></dd>
+					<dd><input type="text" name="name" size="25" class="inputbox autowidth" value="{REALNAME}" /></dd>
 				</dl>
+				<!-- IF not APPLICATION_EMAIL -->
+				<dl>
+					<dt><label for="email">{L_EMAIL}{L_COLON}*</label></dt>
+					<dd><input type="text" name="email" size="25" maxlength="100" class="inputbox autowidth" value="{APPLICATION_EMAIL}" /></dd>
+				</dl>
+				<!-- ENDIF -->
+				<!-- IF APPLICATION_POSITIONS -->
 				<dl>
 					<dt><label for="postion">{L_APPLICATION_POSITION}{L_COLON}</label></dt>
 					<dd><select name="position" id="position">{APPLICATION_POSITIONS}</select></dd>
 				</dl>
+				<!-- ENDIF -->
 				<dl>
 					<dt><label for="why">{L_APPLICATION_WHY}{L_COLON}*</label></dt>
 					<dd><textarea rows="5" cols="50" name="why" class="inputbox">{WHY}</textarea></dd>
@@ -43,6 +51,11 @@
 		</div>
 	</div>
 <!-- ENDIF -->
+<!-- IF CAPTCHA_TEMPLATE -->
+	<!-- DEFINE $CAPTCHA_TAB_INDEX = 8 -->
+	<!-- INCLUDE {CAPTCHA_TEMPLATE} -->
+<!-- ENDIF -->
+
 	<div class="panel bg2">
 		<div class="inner">
 		<fieldset class="submit-buttons">

@@ -16,7 +16,7 @@ class applicationform_info
 		return array(
 			'filename'	=> '\rmcgirr83\applicationform\acp\applicationform_module',
 			'title'	=> 'ACP_APP_FORM',
-			'version'	=> '1.0.5',
+			'version'	=> '1.0.6',
 			'modes'	=> array(
 				'settings'	=> array('title' => 'ACP_APP_FORM', 'auth' => 'ext_rmcgirr83/applicationform && acl_a_board', 'cat' => array('ACP_APP_FORM')),
 			),
