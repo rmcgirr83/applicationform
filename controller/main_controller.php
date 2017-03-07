@@ -45,7 +45,7 @@ class main_controller
 	protected $applicationform;
 
 	/** @var \phpbb\captcha\factory */
-	protected $captcha_factory;	
+	protected $captcha_factory;
 
 	public function __construct(
 			\phpbb\config\config $config,
@@ -79,7 +79,7 @@ class main_controller
 		if (!function_exists('validate_data'))
 		{
 			include($this->root_path . 'includes/functions_user.' . $this->php_ext);
-		}		
+		}
 		if (!class_exists('parse_message'))
 		{
 			include($this->root_path . 'includes/message_parser.' . $this->php_ext);
@@ -122,7 +122,7 @@ class main_controller
 		{
 			$captcha = $this->captcha_factory->get_instance($this->config['captcha_plugin']);
 			$captcha->init((CONFIRM_REG));
-		}		
+		}
 
 		if ($this->request->is_set_post('submit'))
 		{
