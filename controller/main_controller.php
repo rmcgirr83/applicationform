@@ -243,13 +243,28 @@ class main_controller
 				// Submit the post!
 				submit_post('post', $subject, $this->user->data['username'], POST_NORMAL, $poll, $data);
 
+				//reset captcha
+				if (!$this->user->data['is_registered'] && (isset($captcha) && $captcha->is_solved() === true))
+				{
+					$captcha->reset();
+				}
+
 				$message = $this->user->lang['APPLICATION_SEND'];
 				$message = $message . '<br /><br />' . sprintf($this->user->lang['RETURN_INDEX'], '<a href="' . append_sid("{$this->root_path}index.$this->php_ext") . '">', '</a>');
 				trigger_error($message);
 			}
 		}
 		$form_enctype = (@ini_get('file_uploads') == '0' || strtolower(@ini_get('file_uploads')) == 'off') ? '' : ' enctype="multipart/form-data"';
+
 		// Visual Confirmation - Show images
+		$s_hidden_fields = array();
+
+		if (!$this->user->data['is_registered'])
+		{
+			$s_hidden_fields = array_merge($s_hidden_fields, $captcha->get_hidden_fields());
+		}
+		$s_hidden_fields = build_hidden_fields($s_hidden_fields);
+
 		if (!$this->user->data['is_registered'])
 		{
 			$this->template->assign_vars(array(
@@ -266,6 +281,7 @@ class main_controller
 			'S_ATTACH_BOX'			=> ($attachment_allowed && $form_enctype) ? true : false,
 			'S_ATTACH_REQ'			=> $attachment_req,
 			'S_EMAIL_NEEDED'		=> $this->user->data['user_id'] == ANONYMOUS ? true : false,
+			'S_HIDDEN_FIELDS'		=> $s_hidden_fields,
 		));
 
 		// Send all data to the template file
