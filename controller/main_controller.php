@@ -200,7 +200,7 @@ class main_controller
 			if (!empty($this->config['appform_poll_title']) && !empty($this->config['appform_poll_options']))
 			{
 				$poll_option_text = implode("/n", array($this->config['appform_poll_options']));
-				$poll_max_options = (int) count($poll_option_text);
+				$poll_max_options = (int) $this->config['appform_poll_max_options'];
 				$poll = array(
 					'poll_title'		=> $this->config['appform_poll_title'],
 					'poll_length'		=> 0,
