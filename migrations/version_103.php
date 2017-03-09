@@ -26,6 +26,8 @@ class version_103 extends \phpbb\db\migration\migration
 
 		return(array(
 			array('config.add', array('appform_guest', 0)),
+			array('config.add', array('appform_poll_title', '')),
+			array('config.add', array('appform_poll_options', '')),			
 		));
 	}
 }

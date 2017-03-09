@@ -196,6 +196,28 @@ class main_controller
 
 			$message_md5 = md5($message_parser->message);
 
+			$poll = array();
+			if (!empty($this->config['appform_poll_title']) && !empty($this->config['appform_poll_options']))
+			{
+				$poll_option_text = implode("/n", array($this->config['appform_poll_options']));
+				$poll_max_options = (int) count($poll_option_text);
+				$poll = array(
+					'poll_title'		=> $this->config['appform_poll_title'],
+					'poll_length'		=> 0,
+					'poll_max_options'	=> $poll_max_options,
+					'poll_option_text'	=> $poll_option_text,
+					'poll_start'		=> time(),
+					'poll_last_vote'	=> 0,
+					'poll_vote_change'	=> true,
+					'enable_bbcode'		=> true,
+					'enable_urls'		=> true,
+					'enable_smilies'	=> true,
+					'img_status'		=> true
+				);
+
+				$message_parser->parse_poll($poll);					
+			}
+
 			if (sizeof($message_parser->warn_msg))
 			{
 				$error[] = implode('<br />', $message_parser->warn_msg);
@@ -241,7 +263,6 @@ class main_controller
 					'force_visibility' => true,
 				);
 
-				$poll = array();
 				if ($this->topicdescription !== null)
 				{
 					$data['topic_desc'] = '';

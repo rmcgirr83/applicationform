@@ -49,4 +49,11 @@ $lang = array_merge($lang, array(
 	'APPLICATIONFORM_ALLOW_ATTACHMENT_EXPLAIN' => 'If set to yes, files of types doc, pdf and text will be allowed to be uploaded.',
 	'APPLICATIONFORM_ATTACHMENT_REQ'	=> 'Attachment is required',
 	'APPLICATIONFORM_ATTACHMENT_REQ_EXPLAIN' => 'If set to yes, the form will require an attachment for the position being applied for.',
+	'APPLICATIONFORM_POLL_TITLE'	=> 'Poll Title',
+	'APPLICATIONFORM_POLL_TITLE_EXPLAIN'	=> 'If you want a poll input the title here, else leave it blank to not post a poll',
+	'APPLICATIONFORM_POLL_OPTIONS'				=> 'Poll options',
+	'APPLICATIONFORM_POLL_OPTIONS_EXPLAIN'		=> array(
+		1	=> 'Place each option on a new line. You may enter <strong>%d</strong> option.',
+		2	=> 'Place each option on a new line. You may enter up to <strong>%d</strong> options.',
+	),	
 ));

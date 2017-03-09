@@ -61,6 +61,9 @@ class applicationform_module
 			'APPFORM_NRU'		=> $request->variable('appform_nru', $config['appform_nru']),
 			'APPFORM_ATTACHMENTS' => $request->variable('appform_attach', $config['appform_attach']),
 			'APPFORM_ATTACHMENT_REQ' => $request->variable('appform_attach_req', $config['appform_attach_req']),
+			'APPFORM_POLL_TITLE'	=> $request->variable('appform_poll_title', $config['appform_poll_title'], true),
+			'APPFORM_POLL_OPTIONS'	=> $request->variable('appform_poll_options', $config['appform_poll_options'], true),
+			'L_APPFORM_POLL_OPTIONS_EXPLAIN'	=> $user->lang('APPLICATIONFORM_POLL_OPTIONS_EXPLAIN', (int) $config['max_poll_options']),			
 
 			'U_ACTION'			=> $this->u_action,
 		));
@@ -82,6 +85,8 @@ class applicationform_module
 		$config->set('appform_nru', $request->variable('appform_nru', 0));
 		$config->set('appform_attach', $request->variable('appform_attach', 0));
 		$config->set('appform_attach_req', $request->variable('appform_attach_req', 0));
+		$config->set('appform_poll_title', $request->variable('appform_poll_title', '', true));
+		$config->set('appform_poll_options', $request->variable('appform_poll_options', '', true));		
 	}
 
 	/**
