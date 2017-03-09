@@ -17,6 +17,9 @@ use phpbb\exception\http_exception;
 */
 class main_controller
 {
+	/** @var \phpbb\auth\auth */
+	protected $auth;
+
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -48,6 +51,7 @@ class main_controller
 	protected $captcha_factory;
 
 	public function __construct(
+			\phpbb\auth\auth $auth,
 			\phpbb\config\config $config,
 			\phpbb\db\driver\driver_interface $db,
 			\phpbb\controller\helper $helper,
@@ -60,6 +64,7 @@ class main_controller
 			\phpbb\captcha\factory $captcha_factory,
 			\rmcgirr83\topicdescription\event\listener $topicdescription = null)
 	{
+		$this->auth = $auth;
 		$this->config = $config;
 		$this->db = $db;
 		$this->helper = $helper;
@@ -121,7 +126,7 @@ class main_controller
 		if (!$this->user->data['is_registered'])
 		{
 			$captcha = $this->captcha_factory->get_instance($this->config['captcha_plugin']);
-			$captcha->init((CONFIRM_REG));
+			$captcha->init((CONFIRM_POST));
 		}
 
 		if ($this->request->is_set_post('submit'))
@@ -153,14 +158,6 @@ class main_controller
 				$error[] = $this->user->lang['APP_NOT_COMPLETELY_FILLED'];
 			}
 
-			if (empty($message_parser->attachment_data) && $attachment_req && $attachment_allowed)
-			{
-				$error[] = $this->user->lang['APPLICATION_REQUIRES_ATTACHMENT'];
-			}
-
-			// Replace "error" strings with their real, localised form
-			$error = array_map(array($this->user, 'lang'), $error);
-
 			// CAPTCHA check
 			if (!$this->user->data['is_registered'] && !$captcha->is_solved())
 			{
@@ -175,6 +172,14 @@ class main_controller
 					$error[] = $this->user->lang['TOO_MANY_REGISTERS'];
 				}
 			}
+			
+			if (empty($message_parser->attachment_data) && $attachment_req && $attachment_allowed)
+			{
+				$error[] = $this->user->lang['APPLICATION_REQUIRES_ATTACHMENT'];
+			}
+
+			// Replace "error" strings with their real, localised form
+			$error = array_map(array($this->user, 'lang'), $error);
 
 			// Setting the variables we need to submit the post to the forum where all the applications come in
 			$message = censor_text(trim('[quote] ' . $data['why'] . '[/quote]'));
@@ -183,12 +188,35 @@ class main_controller
 			$url = generate_board_url() . '/memberlist.' . $this->php_ext . '?mode=viewprofile&u=' . $this->user->data['user_id'];
 			$color = !empty($this->user->data['user_colour']) ? '[color=#' . $this->user->data['user_colour'] . ']' . $this->user->data['username'] . '[/color]' : $this->user->data['username'];
 			$user_name = $this->user->data['is_registered'] ? '[url=' . $url . ']' . $color . '[/url]' : $data['username'];
+			$user_ip = '[url=http://en.utrace.de/?query=' . $this->user->ip . ']' . $this->user->ip . '[/url]';
 
-			$apply_post	= $this->user->lang('APPLICATION_MESSAGE', $user_name, $this->request->variable('name', '', true), $data['email'], $data['position'], $message);
+			$apply_post	= $this->user->lang('APPLICATION_MESSAGE', $user_name, $user_name, $user_ip, $data['email'], $data['position'], $message);
 
 			$message_parser->message = $apply_post;
 
 			$message_md5 = md5($message_parser->message);
+
+			$poll = array();
+			if (!empty($this->config['appform_poll_title']) && !empty($this->config['appform_poll_options']))
+			{
+				$poll_option_text = implode("/n", array($this->config['appform_poll_options']));
+				$poll_max_options = (int) $this->config['appform_poll_max_options'];
+				$poll = array(
+					'poll_title'		=> $this->config['appform_poll_title'],
+					'poll_length'		=> 0,
+					'poll_max_options'	=> $poll_max_options,
+					'poll_option_text'	=> $poll_option_text,
+					'poll_start'		=> time(),
+					'poll_last_vote'	=> 0,
+					'poll_vote_change'	=> true,
+					'enable_bbcode'		=> true,
+					'enable_urls'		=> true,
+					'enable_smilies'	=> true,
+					'img_status'		=> true
+				);
+
+				$message_parser->parse_poll($poll);					
+			}
 
 			if (sizeof($message_parser->warn_msg))
 			{
@@ -235,7 +263,6 @@ class main_controller
 					'force_visibility' => true,
 				);
 
-				$poll = array();
 				if ($this->topicdescription !== null)
 				{
 					$data['topic_desc'] = '';
@@ -309,5 +336,24 @@ class main_controller
 			$select .= '<option value="' . $item . '"' . $item_selected . '>' . $item . '</option>';
 		}
 		return $select;
+	}
+
+	public function whois($user_ip)
+	{
+		if (!$this->auth->acl_gets('a_', 'm_'))
+		{
+			throw new http_exception(401, 'NOT_AUTHORISED');
+		}
+		$this->user->add_lang('acp/users');
+
+		$this->page_title = 'WHOIS';
+		$this->tpl_name = 'simple_body';
+
+		$user_ip = phpbb_ip_normalise($user_ip);
+		$ipwhois = user_ipwhois($user_ip);
+
+		$this->template->assign_var('WHOIS', $ipwhois);
+
+		return $this->helper->render('viewonline_whois.html', $this->page_title);
 	}
 }

@@ -17,7 +17,9 @@ class applicationform_module
 	function main($id, $mode)
 	{
 		global $db, $config, $request, $template, $user, $phpbb_container;
+		global $phpbb_root_path, $phpEx;
 
+		$user->add_lang('posting');
 		$user->add_lang_ext('rmcgirr83/applicationform', 'acp_applicationform');
 
 		$this->page_title = $user->lang['ACP_APPLICATIONFORM_SETTINGS'];
@@ -30,13 +32,43 @@ class applicationform_module
 		if ($request->is_set_post('submit'))
 		{
 			$error = array();
-
 			// Test if form key is valid
 			if (!check_form_key('appform'))
 			{
 				$error[] = $user->lang('FORM_INVALID');
 			}
 
+			$poll_options = $request->variable('appform_poll_options', '', true);
+			$poll_title = $request->variable('appform_poll_title', '', true);
+			if (!empty($poll_options) || !empty($poll_title))
+			{
+				if (!class_exists('parse_message'))
+				{
+					include($phpbb_root_path . 'includes/message_parser.' . $phpEx);
+				}
+				$message_parser = new \parse_message();
+				$poll_option_text = implode("/n", array($poll_options));
+				$poll_max_options = $request->variable('poll_max_options', 0);
+				$poll = array(
+					'poll_title'		=> $poll_title,
+					'poll_length'		=> 0,
+					'poll_max_options'	=> $poll_max_options,
+					'poll_option_text'	=> $poll_option_text,
+					'poll_start'		=> time(),
+					'poll_last_vote'	=> 0,
+					'poll_vote_change'	=> true,
+					'enable_bbcode'		=> true,
+					'enable_urls'		=> true,
+					'enable_smilies'	=> true,
+					'img_status'		=> true,
+				);
+				$message_parser->parse_poll($poll);
+
+				if (sizeof($message_parser->warn_msg))
+				{
+					$error[] = implode('<br />', $message_parser->warn_msg);
+				}
+			}
 			if ($request->variable('appform_positions', '', true) === '')
 			{
 				$error[] = $user->lang('APPFORM_MUST_HAVE_POSITIONS');
@@ -61,6 +93,10 @@ class applicationform_module
 			'APPFORM_NRU'		=> $request->variable('appform_nru', $config['appform_nru']),
 			'APPFORM_ATTACHMENTS' => $request->variable('appform_attach', $config['appform_attach']),
 			'APPFORM_ATTACHMENT_REQ' => $request->variable('appform_attach_req', $config['appform_attach_req']),
+			'APPFORM_POLL_TITLE'	=> $request->variable('appform_poll_title', $config['appform_poll_title'], true),
+			'APPFORM_POLL_OPTIONS'	=> $request->variable('appform_poll_options', $config['appform_poll_options'], true),
+			'APPFORM_POLL_MAX_OPTIONS'	=> $request->variable('appform_poll_max_options', $config['appform_poll_max_options']),
+			'L_POLL_OPTIONS_EXPLAIN'	=> $user->lang('POLL_OPTIONS_EXPLAIN', (int) $config['max_poll_options']),
 
 			'U_ACTION'			=> $this->u_action,
 		));
@@ -82,6 +118,9 @@ class applicationform_module
 		$config->set('appform_nru', $request->variable('appform_nru', 0));
 		$config->set('appform_attach', $request->variable('appform_attach', 0));
 		$config->set('appform_attach_req', $request->variable('appform_attach_req', 0));
+		$config->set('appform_poll_title', $request->variable('appform_poll_title', '', true));
+		$config->set('appform_poll_options', $request->variable('appform_poll_options', '', true));
+		$config->set('appform_poll_max_options', $request->variable('appform_poll_max_options', 0));
 	}
 
 	/**

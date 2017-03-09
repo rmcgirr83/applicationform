@@ -19,7 +19,7 @@
 			<span>{L_APPFORM_GUEST_EXPLAIN}</span></dt>
 			<dd><label><input type="radio" class="radio" name="appform_guest" value="1" <!-- IF APPFORM_GUEST -->id="appform_guest" checked="checked"<!-- ENDIF --> /> {L_YES}</label>
 			<label><input type="radio" class="radio" name="appform_guest" value="0" <!-- IF not APPFORM_GUEST -->id="appform_guest" checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
-		</dl>		
+		</dl>
 		<dl>
 			<dt><label for="appform_nru">{L_APPLICATIONFORM_NRU}{L_COLON}</label><br />
 			<span>{L_APPLICATIONFORM_NRU_EXPLAIN}</span></dt>
@@ -43,6 +43,19 @@
 			<span>{L_APPLICATIONFORM_POSITIONS_EXPLAIN}</span></dt>
 			<dd><textarea name="appform_positions" id="appform_positions" rows="10" cols="40">{APPFORM_POSITIONS}</textarea></dd>
 		</dl>
+		<dl>
+			<dt><label id="appform_poll_title">{L_POLL_QUESTION}{L_COLON}</label></dt>
+			<dd><input name="appform_poll_title" type="text" class="text medium" maxlength="255" id="appform_poll_title" value="{APPFORM_POLL_TITLE}" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_poll_options">{L_POLL_OPTIONS}{L_COLON}</label><br /><span>{L_POLL_OPTIONS_EXPLAIN}</span></dt>
+			<dd><textarea name="appform_poll_options" id="appform_poll_options" rows="5" cols="35" class="inputbox">{APPFORM_POLL_OPTIONS}</textarea></dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_poll_max_options">{L_POLL_MAX_OPTIONS}{L_COLON}</label></dt>
+			<dd><input type="number" min="1" max="127" name="appform_poll_max_options" id="appform_poll_max_options" value="{APPFORM_POLL_MAX_OPTIONS}" class="inputbox autowidth" /></dd>
+			<dd>{L_POLL_MAX_OPTIONS_EXPLAIN}</dd>
+		</dl>		
 		<p class="submit-buttons">
 			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
 			<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />

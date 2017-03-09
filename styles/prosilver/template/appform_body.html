@@ -25,6 +25,10 @@
 					<dt><label for="why">{L_APPLICATION_WHY}{L_COLON}*</label></dt>
 					<dd><textarea rows="5" cols="50" name="why" class="inputbox">{WHY}</textarea></dd>
 				</dl>
+				<!-- IF CAPTCHA_TEMPLATE -->
+					<!-- DEFINE $CAPTCHA_TAB_INDEX = 5 -->
+					<!-- INCLUDE {CAPTCHA_TEMPLATE} -->
+				<!-- ENDIF -->				
 			</fieldset>
 		</div>
 	</div>
@@ -48,10 +52,6 @@
 		</fieldset>
 		</div>
 	</div>
-<!-- ENDIF -->
-<!-- IF CAPTCHA_TEMPLATE -->
-	<!-- DEFINE $CAPTCHA_TAB_INDEX = 8 -->
-	<!-- INCLUDE {CAPTCHA_TEMPLATE} -->
 <!-- ENDIF -->
 
 	<div class="panel bg2">
