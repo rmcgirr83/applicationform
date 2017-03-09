@@ -172,7 +172,7 @@ class main_controller
 					$error[] = $this->user->lang['TOO_MANY_REGISTERS'];
 				}
 			}
-			
+
 			if (empty($message_parser->attachment_data) && $attachment_req && $attachment_allowed)
 			{
 				$error[] = $this->user->lang['APPLICATION_REQUIRES_ATTACHMENT'];
@@ -215,7 +215,7 @@ class main_controller
 					'img_status'		=> true
 				);
 
-				$message_parser->parse_poll($poll);					
+				$message_parser->parse_poll($poll);
 			}
 
 			if (sizeof($message_parser->warn_msg))
