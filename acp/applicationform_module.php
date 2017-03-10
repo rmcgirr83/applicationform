@@ -47,13 +47,13 @@ class applicationform_module
 					include($phpbb_root_path . 'includes/message_parser.' . $phpEx);
 				}
 				$message_parser = new \parse_message();
-				$poll_option_text = implode("/n", array($poll_options));
-				$poll_max_options = $request->variable('poll_max_options', 0);
+				$poll_max_options = $request->variable('appform_poll_max_options', 0);
+
 				$poll = array(
 					'poll_title'		=> $poll_title,
 					'poll_length'		=> 0,
 					'poll_max_options'	=> $poll_max_options,
-					'poll_option_text'	=> $poll_option_text,
+					'poll_option_text'	=> $poll_options,
 					'poll_start'		=> time(),
 					'poll_last_vote'	=> 0,
 					'poll_vote_change'	=> true,
