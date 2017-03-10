@@ -87,11 +87,11 @@ class applicationform_module
 
 		$template->assign_vars(array(
 			'ERROR'				=> isset($error) ? ((sizeof($error)) ? implode('<br />', $error) : '') : '',
-			'APPFORM_FORUM_ID'	=> $this->appform_forum_select($config['appform_forum_id']),
+			'APPFORM_FORUM_ID'	=> $this->appform_forum_select($request->variable('appform_forum_id', $config['appform_forum_id'])),
 			'APPFORM_POSITIONS'	=> $request->variable('appform_positions', $config['appform_positions'], true),
 			'APPFORM_GUEST'		=> $request->variable('appform_guest', $config['appform_guest'], true),
 			'APPFORM_NRU'		=> $request->variable('appform_nru', $config['appform_nru']),
-			'APPFORM_ATTACHMENTS' => $request->variable('appform_attach', $config['appform_attach']),
+			'APPFORM_ATTACHMENT' => $request->variable('appform_attach', $config['appform_attach']),
 			'APPFORM_ATTACHMENT_REQ' => $request->variable('appform_attach_req', $config['appform_attach_req']),
 			'APPFORM_POLL_TITLE'	=> $request->variable('appform_poll_title', $config['appform_poll_title'], true),
 			'APPFORM_POLL_OPTIONS'	=> $request->variable('appform_poll_options', $config['appform_poll_options'], true),
@@ -129,8 +129,8 @@ class applicationform_module
 	 * @return drop down select
 	 * @access protected
 	 */
-	private function appform_forum_select($value, $key = '')
+	private function appform_forum_select($value)
 	{
-		return '<select id="' . $key . '" name="appform_forum_id">' . make_forum_select($value, false, true, true) . '</select>';
+		return '<select id="appform_forum_id" name="appform_forum_id">' . make_forum_select($value, false, true, true) . '</select>';
 	}
 }
