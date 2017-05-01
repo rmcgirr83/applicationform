@@ -126,7 +126,7 @@ class main_controller
 		if (!$this->user->data['is_registered'])
 		{
 			$captcha = $this->captcha_factory->get_instance($this->config['captcha_plugin']);
-			$captcha->init((CONFIRM_POST));
+			$captcha->init(CONFIRM_POST);
 		}
 
 		if ($this->request->is_set_post('submit'))

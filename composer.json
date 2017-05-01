@@ -1,10 +1,10 @@
 {
     "name": "rmcgirr83/applicationform",
     "type": "phpbb-extension",
-    "description": "This form allows users to apply for a certain team positions. The applications are sent to a forum, as chosen in the ACP settings of the extension, where administrators can read them and see if the users are the best for the position.",
+    "description": "This form allows users to apply for a certain positions. The applications are sent to a forum, as chosen in the ACP settings of the extension, where administrators can read them and see if the users are the best for the position.",
     "homepage": "https://github.com/rmcgirr83/phpbb-3.1-applicationform",
-    "version": "1.0.6",
-    "time": "2017-03-17",
+    "version": "1.0.7",
+    "time": "2017-05-01",
     "keywords": [
         "phpbb",
         "extension",
