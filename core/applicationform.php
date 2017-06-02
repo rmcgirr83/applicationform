@@ -11,6 +11,8 @@ namespace rmcgirr83\applicationform\core;
 
 class applicationform
 {
+	/** @var \phpbb\auth\auth */
+	protected $auth;
 
 	/** @var \phpbb\db\driver\driver */
 	protected $db;
@@ -19,9 +21,11 @@ class applicationform
 	protected $user;
 
 	public function __construct(
+		\phpbb\auth\auth $auth,
 		\phpbb\db\driver\driver_interface $db,
 		\phpbb\user $user)
 	{
+		$this->auth = $auth;	
 		$this->db = $db;
 		$this->user = $user;
 	}
@@ -62,4 +66,23 @@ class applicationform
 
 		return true;
 	}
+
+	public function whois($user_ip, $forum_id)
+	{
+		if (!$this->auth->acl_gets('a_', 'm_') || !$this->auth->acl_get('m_', $forum_id)
+		{
+			throw new http_exception(401, 'NOT_AUTHORISED');
+		}
+		$this->user->add_lang('acp/users');
+
+		$this->page_title = 'WHOIS';
+		$this->tpl_name = 'simple_body';
+
+		$user_ip = phpbb_ip_normalise($user_ip);
+		$ipwhois = user_ipwhois($user_ip);
+
+		$this->template->assign_var('WHOIS', $ipwhois);
+
+		return $this->helper->render('viewonline_whois.html', $this->page_title);
+	}	
 }
