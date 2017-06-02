@@ -17,9 +17,6 @@ use phpbb\exception\http_exception;
 */
 class main_controller
 {
-	/** @var \phpbb\auth\auth */
-	protected $auth;
-
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -51,7 +48,6 @@ class main_controller
 	protected $captcha_factory;
 
 	public function __construct(
-			\phpbb\auth\auth $auth,
 			\phpbb\config\config $config,
 			\phpbb\db\driver\driver_interface $db,
 			\phpbb\controller\helper $helper,
@@ -64,7 +60,6 @@ class main_controller
 			\phpbb\captcha\factory $captcha_factory,
 			\rmcgirr83\topicdescription\event\listener $topicdescription = null)
 	{
-		$this->auth = $auth;
 		$this->config = $config;
 		$this->db = $db;
 		$this->helper = $helper;
@@ -116,7 +111,7 @@ class main_controller
 		add_form_key('applicationform');
 
 		$data = array(
-			'username'		=> ($this->user->data['user_id'] != ANONYMOUS) ?  $this->user->data['username'] : $this->request->variable('name', '', true),
+			'username'		=> $this->request->variable('name', '', true),
 			'email'			=> ($this->user->data['user_id'] != ANONYMOUS) ? $this->user->data['user_email'] : strtolower($this->request->variable('email', '')),
 			'why'			=> $this->request->variable('why', '', true),
 			'position'		=> $this->request->variable('position', '', true),
@@ -336,24 +331,5 @@ class main_controller
 			$select .= '<option value="' . $item . '"' . $item_selected . '>' . $item . '</option>';
 		}
 		return $select;
-	}
-
-	public function whois($user_ip)
-	{
-		if (!$this->auth->acl_gets('a_', 'm_'))
-		{
-			throw new http_exception(401, 'NOT_AUTHORISED');
-		}
-		$this->user->add_lang('acp/users');
-
-		$this->page_title = 'WHOIS';
-		$this->tpl_name = 'simple_body';
-
-		$user_ip = phpbb_ip_normalise($user_ip);
-		$ipwhois = user_ipwhois($user_ip);
-
-		$this->template->assign_var('WHOIS', $ipwhois);
-
-		return $this->helper->render('viewonline_whois.html', $this->page_title);
 	}
 }
