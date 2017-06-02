@@ -25,7 +25,7 @@ class applicationform
 		\phpbb\db\driver\driver_interface $db,
 		\phpbb\user $user)
 	{
-		$this->auth = $auth;	
+		$this->auth = $auth;
 		$this->db = $db;
 		$this->user = $user;
 	}
@@ -69,7 +69,7 @@ class applicationform
 
 	public function whois($user_ip, $forum_id)
 	{
-		if (!$this->auth->acl_gets('a_', 'm_') || !$this->auth->acl_get('m_', $forum_id)
+		if (!$this->auth->acl_gets('a_', 'm_') || !$this->auth->acl_get('m_', $forum_id))
 		{
 			throw new http_exception(401, 'NOT_AUTHORISED');
 		}
@@ -84,5 +84,5 @@ class applicationform
 		$this->template->assign_var('WHOIS', $ipwhois);
 
 		return $this->helper->render('viewonline_whois.html', $this->page_title);
-	}	
+	}
 }
