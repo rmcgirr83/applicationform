@@ -148,7 +148,7 @@ class main_controller
 			$message_parser = new \parse_message();
 			$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
 
-			if ($data['why'] === '')
+			if ($data['why'] === '' || $data['username'] === '')
 			{
 				$error[] = $this->user->lang['APP_NOT_COMPLETELY_FILLED'];
 			}
@@ -185,7 +185,7 @@ class main_controller
 			$user_name = $this->user->data['is_registered'] ? '[url=' . $url . ']' . $color . '[/url]' : $data['username'];
 			$user_ip = '[url=http://en.utrace.de/?query=' . $this->user->ip . ']' . $this->user->ip . '[/url]';
 
-			$apply_post	= $this->user->lang('APPLICATION_MESSAGE', $user_name, $user_name, $user_ip, $data['email'], $data['position'], $message);
+			$apply_post	= $this->user->lang('APPLICATION_MESSAGE', $user_name, $data['username'], $user_ip, $data['email'], $data['position'], $message);
 
 			$message_parser->message = $apply_post;
 
