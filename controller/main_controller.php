@@ -184,15 +184,15 @@ class main_controller
 				$error[] = $this->user->lang('APPLICATION_REQUIRES_WHY');
 			}
 
-			if($have_questions)
+			if ($have_questions)
 			{
 				//var_dump($answers);
-				foreach ($answers as $key => $value)
+				foreach ($answers as $question => $answer)
 				{
-					$response[$key] = validate_string($value, false, $this->config['min_post_chars']);
-					if ($response[$key])
+					$response = validate_string($answer, false, $this->config['min_post_chars']);
+					if ($response)
 					{
-						$error[] = $this->user->lang('APPLICATION_ANSWER_TOO_SHORT', $key);
+						$error[] = $this->user->lang('APPLICATION_ANSWER_TOO_SHORT', $question);
 					}
 				}
 
@@ -242,7 +242,7 @@ class main_controller
 					$responses .= "\n".'[b]' . $key .'[/b]' .  $this->user->lang('COLON') . ' ' . censor_text($value);
 				}
 			}
-			
+
 			$apply_post	= $this->user->lang('APPLICATION_MESSAGE', $user_name, $user_name, $user_ip, $data['email'], $data['position'], $message . $responses);
 
 			$message_parser->message = $apply_post;
