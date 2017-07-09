@@ -17,8 +17,14 @@ use phpbb\exception\http_exception;
 */
 class main_controller
 {
+	/** @var \phpbb\auth\auth */
+	protected $auth;
+
 	/** @var \phpbb\config\config */
 	protected $config;
+
+	/** @var \phpbb\config\db_text */
+	protected $config_text;
 
 	/** @var \phpbb\db\driver\driver */
 	protected $db;
@@ -48,7 +54,9 @@ class main_controller
 	protected $captcha_factory;
 
 	public function __construct(
+			\phpbb\auth\auth $auth,
 			\phpbb\config\config $config,
+			\phpbb\config\db_text $config_text,
 			\phpbb\db\driver\driver_interface $db,
 			\phpbb\controller\helper $helper,
 			\phpbb\request\request $request,
@@ -60,7 +68,9 @@ class main_controller
 			\phpbb\captcha\factory $captcha_factory,
 			\rmcgirr83\topicdescription\event\listener $topicdescription = null)
 	{
+		$this->auth = $auth;
 		$this->config = $config;
+		$this->config_text = $config_text;
 		$this->db = $db;
 		$this->helper = $helper;
 		$this->request = $request;
@@ -117,16 +127,46 @@ class main_controller
 			'position'		=> $this->request->variable('position', '', true),
 		);
 
+		$appform_questions			= $this->config_text->get_array(array(
+			'appform_questions',
+		));
+
+		$have_questions = (!empty($appform_questions['appform_questions'])) ? true : false;
+
+		if ($have_questions)
+		{
+			//convert the questions into an array
+			$questions = explode("\n", $appform_questions['appform_questions']);
+
+			$answers = array();
+			foreach ($questions as $key => $question)
+			{
+				$this->template->assign_block_vars('questions', array(
+					'QUESTION'	=> $question,
+					'FORM_NAME'	=> $key,
+					'ANSWER'	=> $this->request->variable($key, '', true),
+				));
+				$answers[$question] = $this->request->variable($key, '', true);
+			}
+		}
+
 		// Visual Confirmation - The CAPTCHA kicks in here
 		if (!$this->user->data['is_registered'])
 		{
 			$captcha = $this->captcha_factory->get_instance($this->config['captcha_plugin']);
-			$captcha->init(CONFIRM_POST);
+			$captcha->init((CONFIRM_POST));
 		}
 
 		if ($this->request->is_set_post('submit'))
 		{
 			$error = array();
+
+			// Test if form key is valid
+			if (!check_form_key('applicationform'))
+			{
+				$error[] = $this->user->lang['FORM_INVALID'];
+			}
+
 			if (!$this->user->data['is_registered'])
 			{
 				$error = validate_data($data, array(
@@ -139,18 +179,23 @@ class main_controller
 				));
 			}
 
-			// Test if form key is valid
-			if (!check_form_key('applicationform'))
+			if ($data['why'] === '')
 			{
-				$error[] = $this->user->lang['FORM_INVALID'];
+				$error[] = $this->user->lang('APPLICATION_REQUIRES_WHY');
 			}
 
-			$message_parser = new \parse_message();
-			$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
-
-			if ($data['why'] === '' || $data['username'] === '')
+			if($have_questions)
 			{
-				$error[] = $this->user->lang['APP_NOT_COMPLETELY_FILLED'];
+				//var_dump($answers);
+				foreach ($answers as $key => $value)
+				{
+					$response[$key] = validate_string($value, false, $this->config['min_post_chars']);
+					if ($response[$key])
+					{
+						$error[] = $this->user->lang('APPLICATION_ANSWER_TOO_SHORT', $key);
+					}
+				}
+
 			}
 
 			// CAPTCHA check
@@ -164,28 +209,41 @@ class main_controller
 
 				if ($this->config['max_reg_attempts'] && $captcha->get_attempt_count() > $this->config['max_reg_attempts'])
 				{
-					$error[] = $this->user->lang['TOO_MANY_REGISTERS'];
+					$error[] = $this->user->lang('TOO_MANY_REGISTERS');
 				}
 			}
 
+			$message_parser = new \parse_message();
+			$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
+
 			if (empty($message_parser->attachment_data) && $attachment_req && $attachment_allowed)
 			{
-				$error[] = $this->user->lang['APPLICATION_REQUIRES_ATTACHMENT'];
+				$error[] = $this->user->lang('APPLICATION_REQUIRES_ATTACHMENT');
 			}
 
 			// Replace "error" strings with their real, localised form
 			$error = array_map(array($this->user, 'lang'), $error);
 
 			// Setting the variables we need to submit the post to the forum where all the applications come in
+
 			$message = censor_text(trim('[quote] ' . $data['why'] . '[/quote]'));
-			$subject	= $this->user->lang('APPLICATION_SUBJECT', $this->user->data['username']);
+			$subject	= $this->user->lang('APPLICATION_SUBJECT', $data['username'] . ' - ' . $data['position']);
 
 			$url = generate_board_url() . '/memberlist.' . $this->php_ext . '?mode=viewprofile&u=' . $this->user->data['user_id'];
-			$color = !empty($this->user->data['user_colour']) ? '[color=#' . $this->user->data['user_colour'] . ']' . $this->user->data['username'] . '[/color]' : $this->user->data['username'];
+			$color = !empty($this->user->data['user_colour']) ? '[color=#' . $this->user->data['user_colour'] . ']' . $data['username'] . '[/color]' : $data['username'];
 			$user_name = $this->user->data['is_registered'] ? '[url=' . $url . ']' . $color . '[/url]' : $data['username'];
 			$user_ip = '[url=http://en.utrace.de/?query=' . $this->user->ip . ']' . $this->user->ip . '[/url]';
 
-			$apply_post	= $this->user->lang('APPLICATION_MESSAGE', $user_name, $data['username'], $user_ip, $data['email'], $data['position'], $message);
+			$responses = '';
+			if ($have_questions)
+			{
+				foreach ($answers as $key => $value)
+				{
+					$responses .= "\n".'[b]' . $key .'[/b]' .  $this->user->lang('COLON') . ' ' . censor_text($value);
+				}
+			}
+			
+			$apply_post	= $this->user->lang('APPLICATION_MESSAGE', $user_name, $user_name, $user_ip, $data['email'], $data['position'], $message . $responses);
 
 			$message_parser->message = $apply_post;
 
@@ -217,6 +275,7 @@ class main_controller
 			{
 				$error[] = implode('<br />', $message_parser->warn_msg);
 			}
+
 			$message_parser->parse(true, true, true, true, false, true, true);
 
 			// no errors, let's proceed
@@ -273,6 +332,7 @@ class main_controller
 
 				$message = $this->user->lang['APPLICATION_SEND'];
 				$message = $message . '<br /><br />' . sprintf($this->user->lang['RETURN_INDEX'], '<a href="' . append_sid("{$this->root_path}index.$this->php_ext") . '">', '</a>');
+
 				trigger_error($message);
 			}
 		}
@@ -294,7 +354,7 @@ class main_controller
 			));
 		}
 		$this->template->assign_vars(array(
-			'REALNAME'				=> $data['username'],
+			'REALNAME'				=> ($this->user->data['user_id'] != ANONYMOUS && empty($data['username'])) ?  $this->user->data['username'] : $data['username'],
 			'APPLICATION_POSITIONS' => $this->display_positions(explode("\n", $this->config['appform_positions']), $data['position']),
 			'APPLICATION_EMAIL'		=> $data['email'],
 			'WHY'					=> $data['why'],
@@ -331,5 +391,24 @@ class main_controller
 			$select .= '<option value="' . $item . '"' . $item_selected . '>' . $item . '</option>';
 		}
 		return $select;
+	}
+
+	public function whois($user_ip)
+	{
+		if (!$this->auth->acl_gets('a_', 'm_'))
+		{
+			throw new http_exception(401, 'NOT_AUTHORISED');
+		}
+		$this->user->add_lang('acp/users');
+
+		$this->page_title = 'WHOIS';
+		$this->tpl_name = 'simple_body';
+
+		$user_ip = phpbb_ip_normalise($user_ip);
+		$ipwhois = user_ipwhois($user_ip);
+
+		$this->template->assign_var('WHOIS', $ipwhois);
+
+		return $this->helper->render('viewonline_whois.html', $this->page_title);
 	}
 }

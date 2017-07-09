@@ -49,4 +49,9 @@ $lang = array_merge($lang, array(
 	'ADD_ATTACHMENT_EXPLAIN'		=> 'Attach a file to assist us in making our determination on your application.',
 	'ADD_ATTACHMENT_REQ'			=> '<strong>You must attach a file in order to be considered for the position</strong>.',
 	'APPLICATION_REQUIRES_ATTACHMENT'	=> 'Please attach a file for the position you are applying for.',
+	'APPLICATION_QUESTIONS'			=> 'Please answer the following questions',
+	'APPLICATION_QUESTIONS_REQUIRED'	=> 'All questions must be answered',
+	'APPLICATION QUESTION_ERROR'	=> 'You didn’t answer all the questions',
+	'APPLICATION_REQUIRES_WHY'		=> 'You need to answer why we should choose you',
+	'APPLICATION_ANSWER_TOO_SHORT'	=> 'The question <em>%1s</em> contains too few characters',
 ));

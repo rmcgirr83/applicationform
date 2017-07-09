@@ -27,6 +27,12 @@ class applicationform_module
 
 		$log = $phpbb_container->get('log');
 
+		$config_text = $phpbb_container->get('config_text');
+
+		$appform_questions			= $config_text->get_array(array(
+			'appform_questions',
+		));
+
 		add_form_key('appform');
 
 		if ($request->is_set_post('submit'))
@@ -93,6 +99,7 @@ class applicationform_module
 			'APPFORM_NRU'		=> $request->variable('appform_nru', $config['appform_nru']),
 			'APPFORM_ATTACHMENT' => $request->variable('appform_attach', $config['appform_attach']),
 			'APPFORM_ATTACHMENT_REQ' => $request->variable('appform_attach_req', $config['appform_attach_req']),
+			'APPFORM_QUESTIONS' => $appform_questions['appform_questions'],
 			'APPFORM_POLL_TITLE'	=> $request->variable('appform_poll_title', $config['appform_poll_title'], true),
 			'APPFORM_POLL_OPTIONS'	=> $request->variable('appform_poll_options', $config['appform_poll_options'], true),
 			'APPFORM_POLL_MAX_OPTIONS'	=> $request->variable('appform_poll_max_options', $config['appform_poll_max_options']),
@@ -110,8 +117,14 @@ class applicationform_module
 	 */
 	protected function set_options()
 	{
-		global $config, $request;
+		global $config, $request, $phpbb_container;
 
+		$config_text = $phpbb_container->get('config_text');
+
+		$appform_questions = $request->variable('appform_questions', '', true);
+		$config_text->set_array(array(
+			'appform_questions'			=> $appform_questions,
+		));
 		$config->set('appform_forum_id', $request->variable('appform_forum_id', 0));
 		$config->set('appform_positions', $request->variable('appform_positions', '', true));
 		$config->set('appform_guest', $request->variable('appform_guest', 0));

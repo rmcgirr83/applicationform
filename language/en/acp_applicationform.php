@@ -37,6 +37,7 @@ $lang = array_merge($lang, array(
 	'ACP_APPLICATIONFORM_SETTINGS'		=> 'Application Form Settings',
 	'APPLICATIONFORM_FORUM'				=> 'Forum',
 	'APPLICATIONFORM_FORUM_EXPLAIN'		=> 'Select the forum, where the application should post to.',
+	'APPFORM_FORUM_NO_ATTACH'			=> 'The forum selected does not allow attachments.',
 	'APPLICATIONFORM_POSITIONS'			=> 'Application positions',
 	'APPLICATIONFORM_POSITIONS_EXPLAIN'	=> 'Enter positions for users to apply for separated by new lines.',
 	'APPFORM_SETTINGS_SUCCESS'			=> 'Application Form settings have been saved.',
@@ -49,4 +50,6 @@ $lang = array_merge($lang, array(
 	'APPLICATIONFORM_ALLOW_ATTACHMENT_EXPLAIN' => 'If set to yes, files of types doc, pdf and text will be allowed to be uploaded.',
 	'APPLICATIONFORM_ATTACHMENT_REQ'	=> 'Attachment is required',
 	'APPLICATIONFORM_ATTACHMENT_REQ_EXPLAIN' => 'If set to yes, the form will require an attachment for the position being applied for.',
+	'APPLICATIONFORM_QUESTIONS'			=> 'Questions',
+	'APPLICATIONFORM_QUESTIONS_EXPLAIN'	=> 'Any additional questions you want to ask on the form can be put here. Each question goes on a new line.',
 ));

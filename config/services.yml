@@ -2,7 +2,9 @@ services:
     rmcgirr83.applicationform.main.controller:
         class: rmcgirr83\applicationform\controller\main_controller
         arguments:
+            - '@auth'		
             - '@config'
+            - '@config_text'
             - '@dbal.conn'
             - '@controller.helper'
             - '@request'
@@ -11,7 +13,7 @@ services:
             - '%core.root_path%'
             - '%core.php_ext%'
             - '@rmcgirr83.applicationform.applicationform'
-            - '@captcha.factory'
+            - '@captcha.factory'			
             - '@?rmcgirr83.topicdescription.listener'
     rmcgirr83.applicationform.listener:
         class: rmcgirr83\applicationform\event\listener
@@ -26,6 +28,5 @@ services:
     rmcgirr83.applicationform.applicationform:
         class: rmcgirr83\applicationform\core\applicationform
         arguments:
-            - '@auth'
             - '@dbal.conn'
             - '@user'

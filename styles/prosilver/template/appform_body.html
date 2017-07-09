@@ -25,6 +25,12 @@
 					<dt><label for="why">{L_APPLICATION_WHY}{L_COLON}*</label></dt>
 					<dd><textarea rows="5" cols="50" name="why" class="inputbox">{WHY}</textarea></dd>
 				</dl>
+				<!-- BEGIN questions -->
+				<dl>
+					<dt><label for="(questions.QUESTION}">{questions.QUESTION}{L_COLON}*</label></dt>
+					<dd><input type="text" name="{questions.FORM_NAME}" class="inputbox" value="{questions.ANSWER}" /></dd>
+				</dl>
+				<!-- END questions -->
 				<!-- IF CAPTCHA_TEMPLATE -->
 					<!-- DEFINE $CAPTCHA_TAB_INDEX = 5 -->
 					<!-- INCLUDE {CAPTCHA_TEMPLATE} -->
