@@ -179,9 +179,9 @@ class main_controller
 				));
 			}
 
-			if ($data['why'] === '')
+			if (validate_string($data['why'], false, $this->config['min_post_chars']))
 			{
-				$error[] = $this->user->lang('APPLICATION_REQUIRES_WHY');
+				$error[] = $this->user->lang('APPLICATION_ANSWER_TOO_SHORT', $this->user->lang('APPLICATION_WHY'));
 			}
 
 			if ($have_questions)
