@@ -50,7 +50,8 @@ class applicationform
 		// now we query the user group table to see if the user is in the nru group
 		$sql = 'SELECT group_id
 				FROM ' . USER_GROUP_TABLE . '
-				WHERE group_id = ' . (int) $group_id . ' AND user_id = ' . $this->user->data['user_id'];
+				WHERE group_id = ' . (int) $group_id . ' 
+				AND user_id = ' . (int) $this->user->data['user_id'];
 		$result = $this->db->sql_query($sql);
 		$group_id = $this->db->sql_fetchfield('group_id');
 		$this->db->sql_freeresult($result);
