@@ -1,9 +1,9 @@
-phpBB-3.1-applicationform
+applicationform
 =========================
 
-phpBB 3.1 extension that allows users to apply for certain team positions. The applications are sent to a forum, as chosen in the ACP settings of the extension, where administrators can read them and see if the users are the best for the position.
+phpBB extension that allows users to apply for certain team positions. The applications are sent to a forum, as chosen in the ACP settings of the extension, where administrators can read them and see if the users are the best for the position.
 
-[![Build Status](https://travis-ci.org/rmcgirr83/phpBB-3.1-applicationform.svg?branch=master)](https://travis-ci.org/rmcgirr83/phpBB-3.1-applicationform)
+[![Build Status](https://travis-ci.org/rmcgirr83/applicationform.svg?branch=master)](https://travis-ci.org/rmcgirr83/applicationform)
 ## Installation
 
 ### 1. clone
@@ -11,7 +11,7 @@ Clone (or download and move) the repository into the folder ext/rmcgirr83/applic
 
 ```
 cd phpBB3
-git clone https://github.com/rmcgirr83/phpBB-3.1-applicationform.git ext/rmcgirr83/applicationform/
+git clone https://github.com/rmcgirr83/applicationform.git ext/rmcgirr83/applicationform/
 ```
 
 ### 2. activate
