@@ -4,6 +4,10 @@
 .editorconfig export-ignore
 travis export-ignore
 *README.MD export-ignore
+acp.PNG export-ignore
+applicationform.PNG export-ignore
+registereduserapplication.PNG export-ignore
+thepostontheforum.PNG export-ignore
 
 # Auto detect text files and perform LF normalization
 * text=false
