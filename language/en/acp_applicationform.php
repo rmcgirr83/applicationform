@@ -34,7 +34,8 @@ if (empty($lang) || !is_array($lang))
 // ’ » “ ” …
 
 $lang = array_merge($lang, [
-	'ACP_APPLICATIONFORM_SETTINGS'		=> 'Application Form Settings',
+	'ACP_APPLICATIONFORM_SETTINGS'		=> 'Application Form Options',
+	'APPLICATIONFORM_SETTINGS'			=> 'Settings',
 	'APPLICATIONFORM_FORUM'				=> 'Forum',
 	'APPLICATIONFORM_FORUM_EXPLAIN'		=> 'Select the forum, where the application should post to.',
 	'APPFORM_FORUM_NO_ATTACH'			=> 'The forum selected does not allow attachments.',
@@ -52,6 +53,9 @@ $lang = array_merge($lang, [
 	'APPLICATIONFORM_ATTACHMENT_REQ_EXPLAIN' => 'If set to yes, the form will require an attachment for the position being applied for.',
 	'APPLICATIONFORM_QUESTIONS'			=> 'Questions',
 	'APPLICATIONFORM_QUESTIONS_EXPLAIN'	=> 'Any additional questions you want to ask on the form can be put here. Each question goes on a new line.',
+	'APPFORM_INFO_PREVIEW'		=> 'Preview',
+	'APPFORM_INFO'				=> 'Application Form Information',
+	'APPFORM_INFO_EXPLAIN'		=> 'This message is displayed on the application form page',
 	//Donation
 	'PAYPAL_IMAGE_URL'          => 'https://www.paypalobjects.com/webstatic/en_US/i/btn/png/silver-pill-paypal-26px.png',
 	'PAYPAL_ALT'                => 'Donate using PayPal',

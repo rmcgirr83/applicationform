@@ -18,7 +18,7 @@ class applicationform_module
 		global $phpbb_container;
 
 		$this->tpl_name = 'acp_applicationform';
-		$this->page_title = $phpbb_container->get('language')->lang('ACP_APPLICATIONFORM_SETTINGS');
+		$this->page_title = $phpbb_container->get('language')->lang('ACP_APPFORM_TITLE');
 
 		// Get an instance of the admin controller
 		$admin_controller = $phpbb_container->get('rmcgirr83.applicationform.admin.controller');

@@ -27,7 +27,7 @@ use phpbb\exception\http_exception;
 /**
 * Main controller
 */
-class main_controller
+class main_controller implements main_interface
 {
 	/** @var \phpbb\auth\auth */
 	protected $auth;
@@ -160,16 +160,17 @@ class main_controller
 			'position'		=> $this->request->variable('position', '', true),
 		];
 
-		$appform_questions			= $this->config_text->get_array([
+		$appform_data			= $this->config_text->get_array([
 			'appform_questions',
+			'appform_positions',
 		]);
 
-		$have_questions = (!empty($appform_questions['appform_questions'])) ? true : false;
+		$have_questions = (!empty($appform_data['appform_questions'])) ? true : false;
 
 		if ($have_questions)
 		{
 			//convert the questions into an array
-			$questions = explode("\n", $appform_questions['appform_questions']);
+			$questions = explode("\n", $appform_data['appform_questions']);
 
 			$answers = [];
 			foreach ($questions as $key => $question)
@@ -182,6 +183,9 @@ class main_controller
 				$answers[$question] = $this->request->variable($key, '', true);
 			}
 		}
+
+		//convert the positions into an array
+		$appform_positions = explode("\n", $appform_data['appform_positions']);
 
 		// Visual Confirmation - The CAPTCHA kicks in here
 		if (!$this->user->data['is_registered'])
@@ -357,6 +361,7 @@ class main_controller
 				$message = $this->language->lang('APPLICATION_SEND');
 				$message = $message . '<br /><br />' . $this->language->lang('RETURN_INDEX', '<a href="' . append_sid("{$this->root_path}index.$this->php_ext") . '">', '</a>');
 
+				meta_refresh(3, append_sid("{$this->root_path}index.$this->php_ext"));
 				trigger_error($message);
 			}
 		}
@@ -377,11 +382,33 @@ class main_controller
 				'CAPTCHA_TEMPLATE'		=> $captcha->get_template(),
 			]);
 		}
+
+		$appform_info = $this->config_text->get('appform_info');
+		if ($appform_info)
+		{
+			$appform_info	= $this->config_text->get_array([
+				'appform_info',
+				'appform_info_uid',
+				'appform_info_bitfield',
+				'appform_info_flags',
+			]);
+
+			$appform_info = generate_text_for_display(
+				$appform_info['appform_info'],
+				$appform_info['appform_info_uid'],
+				$appform_info['appform_info_bitfield'],
+				$appform_info['appform_info_flags']
+			);
+		}
+
 		$this->template->assign_vars([
 			'REALNAME'				=> ($this->user->data['user_id'] != ANONYMOUS && empty($data['username'])) ?  $this->user->data['username'] : $data['username'],
-			'APPLICATION_POSITIONS' => $this->display_positions(explode("\n", $this->config['appform_positions']), $data['position']),
+			'APPLICATION_POSITIONS' => $this->display_positions($appform_positions, $data['position']),
 			'APPLICATION_EMAIL'		=> $data['email'],
 			'WHY'					=> $data['why'],
+
+			'APPFORM_INFO'		=> (!empty($appform_info)) ? $appform_info : $this->language->lang('APPLICATION_WELCOME_MESSAGE'),
+
 			'S_FORM_ENCTYPE'		=> $form_enctype,
 			'S_ERROR'				=> (isset($error) && sizeof($error)) ? implode('<br />', $error) : '',
 			'S_ATTACH_BOX'			=> ($attachment_allowed && $form_enctype) ? true : false,
@@ -415,24 +442,5 @@ class main_controller
 			$select .= '<option value="' . $item . '"' . $item_selected . '>' . $item . '</option>';
 		}
 		return $select;
-	}
-
-	public function whois($user_ip)
-	{
-		if (!$this->auth->acl_gets('a_', 'm_'))
-		{
-			throw new http_exception(401, 'NOT_AUTHORISED');
-		}
-		$this->user->add_lang('acp/users');
-
-		$this->page_title = 'WHOIS';
-		$this->tpl_name = 'simple_body';
-
-		$user_ip = phpbb_ip_normalise($user_ip);
-		$ipwhois = user_ipwhois($user_ip);
-
-		$this->template->assign_var('WHOIS', $ipwhois);
-
-		return $this->helper->render('viewonline_whois.html', $this->page_title);
 	}
 }

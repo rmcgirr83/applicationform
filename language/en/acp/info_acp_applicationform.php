@@ -36,6 +36,6 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, [
 	//Module and page titles
 	'ACP_APPFORM_TITLE'					=> 'Application Form',
-	'ACP_APP_FORM'						=> 'Settings',
+	'ACP_APP_FORM'						=> 'Options',
 	'LOG_APPFORM_CONFIG_SAVED'	=> '<strong>Application form settings changed</strong>',
 ]);

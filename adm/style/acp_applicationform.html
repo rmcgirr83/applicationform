@@ -1,4 +1,11 @@
 {% INCLUDE 'overall_header.html' %}
+<script>
+	var form_name = 'appform';
+	var text_name = 'appform_info';
+	var load_draft = false;
+	var upload = false;
+	var imageTag = false;
+</script>
 <h1>{{ lang('ACP_APPLICATIONFORM_SETTINGS') }}</h1>
 <fieldset>
 	<legend>{{ lang('BUY_ME_A_BEER') }}</legend>
@@ -13,8 +20,44 @@
 	</div>
 {% endif %}
 
-<form id="appform_settings" method="post" action="{{ U_ACTION }}">
+<form id="appform" method="post" action="{{ U_ACTION }}">
 	<fieldset>
+		<legend>{{ lang('APPFORM_INFO') }}</legend>
+		<p>{{ lang('APPFORM_INFO_EXPLAIN') }}</p>
+		{% if APPFORM_INFO_PREVIEW %}
+		<fieldset>
+			<legend>{{ lang('APPFORM_INFO_PREVIEW') }}</legend>
+			<p>{{ APPFORM_INFO_PREVIEW }}</p>
+		</fieldset>
+		{% endif %}
+		{% INCLUDE 'acp_posting_buttons.html' %}
+		<dl class="responsive-columns">
+			<dt style="width: 90px;" id="color_palette_placeholder" data-orientation="v" data-height="12" data-width="15" data-bbcode="true">
+			</dt>
+
+			<dd style="margin-{{ S_CONTENT_FLOW_BEGIN }}: 90px;">
+				<textarea name="appform_info" rows="10" cols="60" style="width: 95%;" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" data-bbcode="true">{{ APPFORM_INFO }}</textarea>
+			</dd>
+
+			<dd style="margin-{{ S_CONTENT_FLOW_BEGIN }}: 90px; margin-top: 5px;">
+				{% if S_BBCODE_ALLOWED %}
+				<label><input type="checkbox" class="radio" name="disable_bbcode"{% if S_BBCODE_DISABLE_CHECKED %} checked="checked"{% endif %} /> {{ lang('DISABLE_BBCODE') }}</label>
+				{% endif %}
+				{% if S_SMILIES_ALLOWED %}
+				<label><input type="checkbox" class="radio" name="disable_smilies"{% if S_SMILIES_DISABLE_CHECKED %} checked="checked"{% endif %} /> {{ lang('DISABLE_SMILIES') }}</label>
+				{% endif %}
+				{% if S_LINKS_ALLOWED %}
+				<label><input type="checkbox" class="radio" name="disable_magic_url"{% if S_MAGIC_URL_DISABLE_CHECKED %} checked="checked"{% endif %} /> {{ lang('DISABLE_MAGIC_URL') }}</label>
+				{% endif %}
+			</dd>
+			<dd style="margin-{{ S_CONTENT_FLOW_BEGIN }}: 90px; margin-top: 10px;"><strong>{{ lang('OPTIONS') }}{{ lang('COLON') }} </strong>{{ BBCODE_STATUS }} :: {{ IMG_STATUS }} :: {{ FLASH_STATUS }} :: {{ URL_STATUS }} :: {{ SMILIES_STATUS }}</dd>
+		</dl>
+		<fieldset class="submit-buttons">
+			<input class="button2" type="submit" name="preview" value="{{ lang('PREVIEW') }}" />
+		</fieldset>
+	</fieldset>
+	<fieldset>
+		<legend>{{ lang('APPLICATIONFORM_SETTINGS') }}</legend>
 		<dl>
 			<dt><label for="appform_forum_id">{{ lang('APPLICATIONFORM_FORUM') }}{{ lang('COLON') }}</label><br />
 			<span>{{ lang('APPLICATIONFORM_FORUM_EXPLAIN') }}</span></dt>
@@ -51,7 +94,7 @@
 		</dl>
 		<dl>
 			<dt><label for="appform_questions">{{ lang('APPLICATIONFORM_QUESTIONS') }}{{ lang('COLON') }}</label><br /><span>{{ lang('APPLICATIONFORM_QUESTIONS_EXPLAIN') }}</span></dt>
-			<dd><textarea name="appform_questions" rows="10" cols="60" style="width: 95%;">{{ APPFORM_QUESTIONS }}</textarea></dd>
+			<dd><textarea name="appform_questions" rows="10" cols="40">{{ APPFORM_QUESTIONS }}</textarea></dd>
 		</dl>
 	</fieldset>
 	<fieldset>

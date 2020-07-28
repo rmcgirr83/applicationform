@@ -18,7 +18,7 @@ class applicationform_info
 			'title'	=> 'ACP_APP_FORM',
 			'version'	=> '1.1.0',
 			'modes'	=> [
-				'settings'	=> ['title' => 'ACP_APP_FORM', 'auth' => 'ext_rmcgirr83/applicationform && acl_a_board', 'cat' => array('ACP_APP_FORM')],
+				'settings'	=> ['title' => 'ACP_APP_FORM', 'auth' => 'ext_rmcgirr83/applicationform && acl_a_board', 'cat' => ['ACP_APP_FORM']],
 			],
 		];
 	}

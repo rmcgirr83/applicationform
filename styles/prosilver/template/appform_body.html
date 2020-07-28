@@ -1,12 +1,21 @@
 {% INCLUDE 'overall_header.html' %}
+<h2 class="titlespace">{{ lang('APPLICATION_PAGETITLE') }}</h2>
 
-<form method="post" id="appform" {{ S_FORM_ENCTYPE }}> 
+<form method="post" id="appform" {{ S_FORM_ENCTYPE }}>
+	{% if APPFORM_INFO %}
+	<div class="contactpanel">
+		<div class="content">
+			{{ APPFORM_INFO }}
+		</div>
+	</div>
+		<br class="clear" />
+	{% endif %}
 	<div class="panel">
 		<div class="inner">
-			<h2>{{ lang('APPLICATION_PAGETITLE') }}</h2>
-			<p>{{ lang('APPLICATION_WELCOME_MESSAGE') }}</p>
 			<fieldset class="fields2">
-				{% if S_ERROR %}<dl><dd class="error">{{ S_ERROR }}</dd></dl>{% endif %}
+				{% if S_ERROR %}
+				<p class="error">{{ S_ERROR }}</p>
+				{% endif %}
 				<dl>
 					<dt><label for="name">{{ lang('APPLICATION_REALNAME') }}{{ lang('COLON') }}*</label></dt>
 					<dd><input type="text" name="name" size="25" class="inputbox autowidth" value="{{ REALNAME }}" /></dd>
@@ -34,7 +43,7 @@
 				{% if CAPTCHA_TEMPLATE %}
 					{% DEFINE CAPTCHA_TAB_INDEX = 5 %}
 					{% INCLUDE ''~ CAPTCHA_TEMPLATE ~'' %}
-				{% endif %}				
+				{% endif %}
 			</fieldset>
 		</div>
 	</div>
@@ -43,12 +52,12 @@
 		<div class="inner">
 
 		<p>{{ lang('ADD_ATTACHMENT_EXPLAIN') }} {% if S_ATTACH_REQ %}{{ lang('ADD_ATTACHMENT_REQ') }}{% endif %}</p>
-		
+
 		<fieldset class="fields2" id="attach-panel-basic">
 		<dl>
 			<dt><label for="fileupload">{{ lang('FILENAME') }}{{ lang('COLON') }}{% if S_ATTACH_REQ %}*{% endif %}</label></dt>
 			<dd>
-				<input type="file" name="fileupload" id="fileupload" class="inputbox autowidth" /> 
+				<input type="file" name="fileupload" id="fileupload" class="inputbox autowidth" />
 			</dd>
 		</dl>
 		<dl>
@@ -64,11 +73,11 @@
 		<div class="inner">
 		<fieldset class="submit-buttons">
 			{{ S_HIDDEN_FIELDS }}
-			<input type="submit" name="submit" id="submit" value="{{ lang('SUBMIT') }}" class="button1" />		
+			<input type="submit" name="submit" id="submit" value="{{ lang('SUBMIT') }}" class="button1" />
 			{{ S_FORM_TOKEN }}
 		</fieldset>
 		</div>
 	</div>
 </form>
 
-{% INCLUDE 'overall_footer.html' %} 
+{% INCLUDE 'overall_footer.html' %}

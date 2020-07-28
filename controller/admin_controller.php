@@ -23,7 +23,7 @@ use phpbb\exception\http_exception;
 /**
 * Admin controller
 */
-class admin_controller
+class admin_controller implements admin_interface
 {
 	/** @var config */
 	protected $config;
@@ -95,6 +95,11 @@ class admin_controller
 		$this->user = $user;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
+
+		if (!function_exists('display_custom_bbcodes'))
+		{
+			include($this->root_path . 'includes/functions_display.' . $this->php_ext);
+		}
 	}
 
 	/**
@@ -107,15 +112,30 @@ class admin_controller
 		$this->language->add_lang('posting');
 		$this->language->add_lang('acp_applicationform', 'rmcgirr83/applicationform');
 
-		$appform_questions			= $this->config_text->get_array([
+		$appform_data			= $this->config_text->get_array([
 			'appform_questions',
+			'appform_positions',
+			'appform_info',
+			'appform_info_uid',
+			'appform_info_bitfield',
+			'appform_info_flags',
 		]);
+
+		$appform_questions = $appform_data['appform_questions'];
+		$appform_positions = $appform_data['appform_positions'];
+		$appform_info		= $appform_data['appform_info'];
+		$appform_info_uid	= $appform_data['appform_info_uid'];
+		$appform_info_bitfield	= $appform_data['appform_info_bitfield'];
+		$appform_info_flags		= $appform_data['appform_info_flags'];
+
+		$appform_info = $this->request->variable('appform_info', $appform_info, true);
 
 		add_form_key('appform');
 
-		if ($this->request->is_set_post('submit'))
+		$error = [];
+
+		if ($this->request->is_set_post('submit') || $this->request->is_set_post('preview'))
 		{
-			$error = [];
 			// Test if form key is valid
 			if (!check_form_key('appform'))
 			{
@@ -158,9 +178,31 @@ class admin_controller
 				$error[] = $this->language->lang('APPFORM_MUST_HAVE_POSITIONS');
 			}
 
+			$appform_questions = $this->request->variable('appform_questions', '', true);
+			$appform_positions = $this->request->variable('appform_positions', '', true);
+
+			generate_text_for_storage(
+				$appform_info,
+				$appform_info_uid,
+				$appform_info_bitfield,
+				$appform_info_flags,
+				!$this->request->variable('disable_bbcode', false),
+				!$this->request->variable('disable_magic_url', false),
+				!$this->request->variable('disable_smilies', false)
+			);
+
 			// Set the options the user configured
-			if (!sizeof($error))
+			if (!sizeof($error) && $this->request->is_set_post('submit'))
 			{
+
+				$this->config_text->set_array([
+					'appform_questions'		=> $appform_questions,
+					'appform_positions'		=> $appform_positions,
+					'appform_info'			=> $appform_info,
+					'appform_info_uid'		=> $appform_info_uid,
+					'appform_info_bitfield'	=> $appform_info_bitfield,
+					'appform_info_flags'	=> $appform_info_flags,
+				]);
 				$this->set_options();
 
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_APPFORM_CONFIG_SAVED');
@@ -169,23 +211,63 @@ class admin_controller
 			}
 		}
 
+		$appform_info_preview = '';
+		if ($this->request->is_set_post('preview'))
+		{
+			generate_text_for_storage(
+				$appform_info_preview,
+				$appform_info_uid,
+				$appform_info_bitfield,
+				$appform_info_flags,
+				!$this->request->variable('disable_bbcode', false),
+				!$this->request->variable('disable_magic_url', false),
+				!$this->request->variable('disable_smilies', false)
+			);
+			$appform_info_preview = generate_text_for_display($appform_info, $appform_info_uid, $appform_info_bitfield, $appform_info_flags);
+		}
+
+		$appform_edit = generate_text_for_edit($appform_info, $appform_info_uid, $appform_info_flags);
+
 		$this->template->assign_vars([
 			'ERROR'				=> isset($error) ? ((sizeof($error)) ? implode('<br />', $error) : '') : '',
+
+			'APPFORM_INFO'			=> $appform_edit['text'],
+			'APPFORM_INFO_PREVIEW'	=> $appform_info_preview,
+
 			'APPFORM_FORUM_ID'	=> $this->appform_forum_select($this->request->variable('appform_forum_id', $this->config['appform_forum_id'])),
-			'APPFORM_POSITIONS'	=> $this->request->variable('appform_positions', $this->config['appform_positions'], true),
 			'APPFORM_GUEST'		=> $this->request->variable('appform_guest', $this->config['appform_guest'], true),
 			'APPFORM_NRU'		=> $this->request->variable('appform_nru', $this->config['appform_nru']),
 			'APPFORM_ATTACHMENT' => $this->request->variable('appform_attach', $this->config['appform_attach']),
 			'APPFORM_ATTACHMENT_REQ' => $this->request->variable('appform_attach_req', $this->config['appform_attach_req']),
-			'APPFORM_QUESTIONS' => $appform_questions['appform_questions'],
 			'APPFORM_POLL_TITLE'	=> $this->request->variable('appform_poll_title', $this->config['appform_poll_title'], true),
 			'APPFORM_POLL_OPTIONS'	=> $this->request->variable('appform_poll_options', $this->config['appform_poll_options'], true),
 			'APPFORM_POLL_MAX_OPTIONS'	=> $this->request->variable('appform_poll_max_options', $this->config['appform_poll_max_options']),
+
+			'APPFORM_POSITIONS'	=> $appform_positions,
+			'APPFORM_QUESTIONS' => $appform_questions,
+
 			'L_POLL_OPTIONS_EXPLAIN'	=> $this->language->lang('POLL_OPTIONS_EXPLAIN', (int) $this->config['max_poll_options']),
 			'L_BUY_ME_A_BEER_EXPLAIN'		=> $this->language->lang('BUY ME A BEER_EXPLAIN', '<a href="' . $this->language->lang('BUY_ME_A_BEER_URL') . '" target="_blank" rel=”noreferrer noopener”>', '</a>'),
 
+			'BBCODE_STATUS'			=> $this->language->lang('BBCODE_IS_ON', '<a href="' . append_sid("{$this->root_path}faq.$this->php_ext", 'mode=bbcode') . '">', '</a>'),
+			'SMILIES_STATUS'		=> $this->language->lang('SMILIES_ARE_ON'),
+			'IMG_STATUS'			=> $this->language->lang('IMAGES_ARE_ON'),
+			'FLASH_STATUS'			=> $this->language->lang('FLASH_IS_ON'),
+			'URL_STATUS'			=> $this->language->lang('URL_IS_ON'),
+
+			'S_BBCODE_DISABLE_CHECKED'		=> !$appform_edit['allow_bbcode'],
+			'S_SMILIES_DISABLE_CHECKED'		=> !$appform_edit['allow_smilies'],
+			'S_MAGIC_URL_DISABLE_CHECKED'	=> !$appform_edit['allow_urls'],
+			'S_BBCODE_ALLOWED'		=> true,
+			'S_SMILIES_ALLOWED'		=> true,
+			'S_BBCODE_IMG'			=> true,
+			'S_BBCODE_FLASH'		=> true,
+			'S_LINKS_ALLOWED'		=> true,
+
 			'U_ACTION'			=> $this->u_action,
 		]);
+		// Assigning custom bbcodes
+		display_custom_bbcodes();
 	}
 
 	/**
@@ -196,12 +278,7 @@ class admin_controller
 	 */
 	protected function set_options()
 	{
-		$appform_questions = $this->request->variable('appform_questions', '', true);
-		$this->config_text->set_array(array(
-			'appform_questions'			=> $appform_questions,
-		));
 		$this->config->set('appform_forum_id', $this->request->variable('appform_forum_id', 0));
-		$this->config->set('appform_positions', $this->request->variable('appform_positions', '', true));
 		$this->config->set('appform_guest', $this->request->variable('appform_guest', 0));
 		$this->config->set('appform_nru', $this->request->variable('appform_nru', 0));
 		$this->config->set('appform_attach', $this->request->variable('appform_attach', 0));
