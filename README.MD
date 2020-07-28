@@ -12,7 +12,7 @@ The Application Form
 ![Screenshot](applicationform.PNG)
 
 Registered User Application Submittal
-![Screenshot](registeredusersapplication.jpg)
+![Screenshot](registereduserapplication.jpg)
 
 Guest Post on the Forum from the application
 ![Screenshot](thepostontheforum.PNG)
