@@ -18,7 +18,6 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
-use phpbb\exception\http_exception;
 
 /**
 * Admin controller

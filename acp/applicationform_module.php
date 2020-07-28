@@ -25,7 +25,6 @@ class applicationform_module
 
 		$admin_controller->display_options();
 
-
 		$admin_controller->set_page_url($this->u_action);
 	}
 }
