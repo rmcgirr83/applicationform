@@ -10,6 +10,18 @@
 
 namespace rmcgirr83\applicationform\controller;
 
+use phpbb\auth\auth;
+use phpbb\config\config;
+use phpbb\config\db_text as config_text;
+use phpbb\db\driver\driver_interface;
+use phpbb\controller\helper;
+use phpbb\language\language;
+use phpbb\request\request;
+use phpbb\template\template;
+use phpbb\user;
+use rmcgirr83\applicationform\core\applicationform;
+use phpbb\captcha\factory as captcha_factory;
+
 use phpbb\exception\http_exception;
 
 /**
@@ -26,11 +38,14 @@ class main_controller
 	/** @var \phpbb\config\db_text */
 	protected $config_text;
 
-	/** @var \phpbb\db\driver\driver */
+	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
 	/** @var \phpbb\controller\helper */
 	protected $helper;
+
+	/** @var \phpbb\language\language */
+	protected $language;
 
 	/* @var \phpbb\request\request */
 	protected $request;
@@ -53,26 +68,45 @@ class main_controller
 	/** @var \phpbb\captcha\factory */
 	protected $captcha_factory;
 
+	/**
+	* Constructor
+	*
+	* @param \phpbb\auth\auth									$auth				Auth object
+	* @param \phpbb\config\config								$config				Config object
+	* @param \phpbb\config\db_text 								$config_text		Config text object
+	* @param \phpbb\db\driver\driver_interface					$db					Database object
+	* @param \phpbb\controller\helper							$helper				Helper object
+	* @param \phpbb\language\language							$language			Language object
+	* @param \phpbb\request\request								$request			Request object
+	* @param \phpbb\template\template							$template			Template object
+	* @param \phpbb\user										$user				User object
+	* @param string												$root_path			phpBB root path
+	* @param string												$php_ext			phpEx
+	* @param \rmcgirr83\applicationform\core\applicationform	$applicationform	Methods for the class
+	* @param \phpbb\captcha\factory								$captcha_factory	Captcha object
+	* @access public
+	*/
 	public function __construct(
-			\phpbb\auth\auth $auth,
-			\phpbb\config\config $config,
-			\phpbb\config\db_text $config_text,
-			\phpbb\db\driver\driver_interface $db,
-			\phpbb\controller\helper $helper,
-			\phpbb\request\request $request,
-			\phpbb\template\template $template,
-			\phpbb\user $user,
+			auth $auth,
+			config $config,
+			config_text $config_text,
+			driver_interface $db,
+			helper $helper,
+			language $language,
+			request $request,
+			template $template,
+			user $user,
 			$root_path,
 			$php_ext,
-			\rmcgirr83\applicationform\core\applicationform $applicationform,
-			\phpbb\captcha\factory $captcha_factory,
-			\rmcgirr83\topicdescription\event\listener $topicdescription = null)
+			applicationform $applicationform,
+			captcha_factory $captcha_factory)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->config_text = $config_text;
 		$this->db = $db;
 		$this->helper = $helper;
+		$this->language = $language;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -80,7 +114,6 @@ class main_controller
 		$this->php_ext = $php_ext;
 		$this->applicationform = $applicationform;
 		$this->captcha_factory = $captcha_factory;
-		$this->topicdescription = $topicdescription;
 
 		if (!function_exists('submit_post'))
 		{
@@ -112,24 +145,24 @@ class main_controller
 			throw new http_exception(401, 'NOT_AUTHORISED');
 		}
 
-		$this->user->add_lang('ucp');
-		$this->user->add_lang_ext('rmcgirr83/applicationform', 'application');
+		$this->language->add_lang(['ucp', 'posting']);
+		$this->language->add_lang('application', 'rmcgirr83/applicationform');
 
 		$attachment_allowed = ($this->config['allow_attachments'] && $this->config['appform_attach']) ? true : false;
 		$attachment_req = $this->config['appform_attach_req'];
 
 		add_form_key('applicationform');
 
-		$data = array(
+		$data = [
 			'username'		=> $this->request->variable('name', '', true),
 			'email'			=> ($this->user->data['user_id'] != ANONYMOUS) ? $this->user->data['user_email'] : strtolower($this->request->variable('email', '')),
 			'why'			=> $this->request->variable('why', '', true),
 			'position'		=> $this->request->variable('position', '', true),
-		);
+		];
 
-		$appform_questions			= $this->config_text->get_array(array(
+		$appform_questions			= $this->config_text->get_array([
 			'appform_questions',
-		));
+		]);
 
 		$have_questions = (!empty($appform_questions['appform_questions'])) ? true : false;
 
@@ -138,14 +171,14 @@ class main_controller
 			//convert the questions into an array
 			$questions = explode("\n", $appform_questions['appform_questions']);
 
-			$answers = array();
+			$answers = [];
 			foreach ($questions as $key => $question)
 			{
-				$this->template->assign_block_vars('questions', array(
+				$this->template->assign_block_vars('questions', [
 					'QUESTION'	=> $question,
 					'FORM_NAME'	=> $key,
 					'ANSWER'	=> $this->request->variable($key, '', true),
-				));
+				]);
 				$answers[$question] = $this->request->variable($key, '', true);
 			}
 		}
@@ -159,29 +192,29 @@ class main_controller
 
 		if ($this->request->is_set_post('submit'))
 		{
-			$error = array();
+			$error = [];
 
 			// Test if form key is valid
 			if (!check_form_key('applicationform'))
 			{
-				$error[] = $this->user->lang['FORM_INVALID'];
+				$error[] = $this->language->lang('FORM_INVALID');
 			}
 
 			if (!$this->user->data['is_registered'])
 			{
-				$error = validate_data($data, array(
+				$error = validate_data($data, [
 					'username'			=> array(
 						array('string', false, $this->config['min_name_chars'], $this->config['max_name_chars']),
 						array('username', '')),
 					'email'			=> array(
 						array('string', false, 6, 60),
 						array('user_email')),
-				));
+				]);
 			}
 
 			if (validate_string($data['why'], false, $this->config['min_post_chars']))
 			{
-				$error[] = $this->user->lang('APPLICATION_ANSWER_TOO_SHORT', $this->user->lang('APPLICATION_WHY'));
+				$error[] = $this->language->lang('APPLICATION_ANSWER_TOO_SHORT', $this->language->lang('APPLICATION_WHY'));
 			}
 
 			if ($have_questions)
@@ -191,7 +224,7 @@ class main_controller
 					$response = validate_string($answer, false, $this->config['min_post_chars']);
 					if ($response)
 					{
-						$error[] = $this->user->lang('APPLICATION_ANSWER_TOO_SHORT', $question);
+						$error[] = $this->language->lang('APPLICATION_ANSWER_TOO_SHORT', $question);
 					}
 				}
 
@@ -208,25 +241,16 @@ class main_controller
 
 				if ($this->config['max_reg_attempts'] && $captcha->get_attempt_count() > $this->config['max_reg_attempts'])
 				{
-					$error[] = $this->user->lang('TOO_MANY_REGISTERS');
+					$error[] = $this->language->lang('TOO_MANY_REGISTERS');
 				}
 			}
 
 			$message_parser = new \parse_message();
 			$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
 
-			if (empty($message_parser->attachment_data) && $attachment_req && $attachment_allowed)
-			{
-				$error[] = $this->user->lang('APPLICATION_REQUIRES_ATTACHMENT');
-			}
-
-			// Replace "error" strings with their real, localised form
-			$error = array_map(array($this->user, 'lang'), $error);
-
 			// Setting the variables we need to submit the post to the forum where all the applications come in
-
 			$message = censor_text(trim('[quote] ' . $data['why'] . '[/quote]'));
-			$subject	= $this->user->lang('APPLICATION_SUBJECT', $data['username'] . ' - ' . $data['position']);
+			$subject	= $this->language->lang('APPLICATION_SUBJECT', $data['username'] . ' - ' . $data['position']);
 
 			$url = generate_board_url() . '/memberlist.' . $this->php_ext . '?mode=viewprofile&u=' . $this->user->data['user_id'];
 			$color = !empty($this->user->data['user_colour']) ? '[color=#' . $this->user->data['user_colour'] . ']' . $data['username'] . '[/color]' : $data['username'];
@@ -238,22 +262,22 @@ class main_controller
 			{
 				foreach ($answers as $key => $value)
 				{
-					$responses .= "\n".'[b]' . $key .'[/b]' .  $this->user->lang('COLON') . ' ' . censor_text($value);
+					$responses .= "\n".'[b]' . $key .'[/b]' .  $this->language->lang('COLON') . ' ' . censor_text($value);
 				}
 			}
 
-			$apply_post	= $this->user->lang('APPLICATION_MESSAGE', $user_name, $user_name, $user_ip, $data['email'], $data['position'], $message . $responses);
+			$apply_post	= $this->language->lang('APPLICATION_MESSAGE', $user_name, $user_name, $user_ip, $data['email'], $data['position'], $message . $responses);
 
 			$message_parser->message = $apply_post;
 
 			$message_md5 = md5($message_parser->message);
 
-			$poll = array();
+			$poll = [];
 			if (!empty($this->config['appform_poll_title']) && !empty($this->config['appform_poll_options']))
 			{
-				$poll_option_text = implode("/n", array($this->config['appform_poll_options']));
+				$poll_option_text = implode("/n", [$this->config['appform_poll_options']]);
 				$poll_max_options = (int) $this->config['appform_poll_max_options'];
-				$poll = array(
+				$poll = [
 					'poll_title'		=> $this->config['appform_poll_title'],
 					'poll_length'		=> 0,
 					'poll_max_options'	=> $poll_max_options,
@@ -265,7 +289,7 @@ class main_controller
 					'enable_urls'		=> true,
 					'enable_smilies'	=> true,
 					'img_status'		=> true
-				);
+				];
 
 				$message_parser->parse_poll($poll);
 			}
@@ -277,6 +301,11 @@ class main_controller
 
 			$message_parser->parse(true, true, true, true, false, true, true);
 
+			if (empty($message_parser->attachment_data) && $attachment_req && $attachment_allowed)
+			{
+				$error[] = $this->language->lang('APPLICATION_REQUIRES_ATTACHMENT');
+			}
+
 			// no errors, let's proceed
 			if (!sizeof($error))
 			{
@@ -287,7 +316,7 @@ class main_controller
 				$forum_name = $this->db->sql_fetchfield('forum_name');
 				$this->db->sql_freeresult($result);
 
-				$data = array(
+				$data = [
 					'forum_id'			=> $this->config['appform_forum_id'],
 					'icon_id'			=> false,
 					'poster_id' 		=> $this->user->data['user_id'],
@@ -314,12 +343,8 @@ class main_controller
 					'enable_indexing'	=> true,
 					'force_approved_state'	=> true,
 					'force_visibility' => true,
-				);
+				];
 
-				if ($this->topicdescription !== null)
-				{
-					$data['topic_desc'] = '';
-				}
 				// Submit the post!
 				submit_post('post', $subject, $this->user->data['username'], POST_NORMAL, $poll, $data);
 
@@ -329,8 +354,8 @@ class main_controller
 					$captcha->reset();
 				}
 
-				$message = $this->user->lang['APPLICATION_SEND'];
-				$message = $message . '<br /><br />' . sprintf($this->user->lang['RETURN_INDEX'], '<a href="' . append_sid("{$this->root_path}index.$this->php_ext") . '">', '</a>');
+				$message = $this->language->lang('APPLICATION_SEND');
+				$message = $message . '<br /><br />' . $this->language->lang('RETURN_INDEX', '<a href="' . append_sid("{$this->root_path}index.$this->php_ext") . '">', '</a>');
 
 				trigger_error($message);
 			}
@@ -338,7 +363,7 @@ class main_controller
 		$form_enctype = (@ini_get('file_uploads') == '0' || strtolower(@ini_get('file_uploads')) == 'off') ? '' : ' enctype="multipart/form-data"';
 
 		// Visual Confirmation - Show images
-		$s_hidden_fields = array();
+		$s_hidden_fields = [];
 
 		if (!$this->user->data['is_registered'])
 		{
@@ -348,11 +373,11 @@ class main_controller
 
 		if (!$this->user->data['is_registered'])
 		{
-			$this->template->assign_vars(array(
+			$this->template->assign_vars([
 				'CAPTCHA_TEMPLATE'		=> $captcha->get_template(),
-			));
+			]);
 		}
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'REALNAME'				=> ($this->user->data['user_id'] != ANONYMOUS && empty($data['username'])) ?  $this->user->data['username'] : $data['username'],
 			'APPLICATION_POSITIONS' => $this->display_positions(explode("\n", $this->config['appform_positions']), $data['position']),
 			'APPLICATION_EMAIL'		=> $data['email'],
@@ -363,10 +388,10 @@ class main_controller
 			'S_ATTACH_REQ'			=> $attachment_req,
 			'S_EMAIL_NEEDED'		=> $this->user->data['user_id'] == ANONYMOUS ? true : false,
 			'S_HIDDEN_FIELDS'		=> $s_hidden_fields,
-		));
+		]);
 
 		// Send all data to the template file
-		return $this->helper->render('appform_body.html', $this->user->lang('APPLICATION_PAGETITLE'));
+		return $this->helper->render('appform_body.html', $this->language->lang('APPLICATION_PAGETITLE'));
 	}
 
 	private function display_positions($input_ary, $selected)

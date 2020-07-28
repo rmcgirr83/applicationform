@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "This form allows users to apply for a certain team positions. The applications are sent to a forum, as chosen in the ACP settings of the extension, where administrators can read them and see if the users are the best for the position.",
     "homepage": "https://github.com/rmcgirr83/applicationform",
-    "version": "1.0.9",
-    "time": "2020-07-05",
+    "version": "1.1.0",
+    "time": "2020-07-28",
     "keywords": [
         "phpbb",
         "extension",
@@ -18,7 +18,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=7.1"
     },
     "extra": {
         "display-name": "Application Form",

@@ -2,29 +2,46 @@ services:
     rmcgirr83.applicationform.main.controller:
         class: rmcgirr83\applicationform\controller\main_controller
         arguments:
-            - '@auth'		
+            - '@auth'
             - '@config'
             - '@config_text'
             - '@dbal.conn'
             - '@controller.helper'
+            - '@language'
             - '@request'
             - '@template'
             - '@user'
             - '%core.root_path%'
             - '%core.php_ext%'
             - '@rmcgirr83.applicationform.applicationform'
-            - '@captcha.factory'			
-            - '@?rmcgirr83.topicdescription.listener'
+            - '@captcha.factory'
+
+    rmcgirr83.applicationform.admin.controller:
+        class: rmcgirr83\applicationform\controller\admin_controller
+        arguments:
+            - '@config'
+            - '@config_text'
+            - '@dbal.conn'
+            - '@language'
+            - '@log'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
     rmcgirr83.applicationform.listener:
         class: rmcgirr83\applicationform\event\listener
         arguments:
             - '@config'
             - '@controller.helper'
+            - '@language'
             - '@template'
             - '@user'
             - '@rmcgirr83.applicationform.applicationform'
         tags:
             - { name: event.listener }
+
     rmcgirr83.applicationform.applicationform:
         class: rmcgirr83\applicationform\core\applicationform
         arguments:

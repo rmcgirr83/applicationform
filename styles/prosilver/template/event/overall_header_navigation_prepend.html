@@ -1,7 +1,7 @@
-<!-- IF U_APP_FORM -->
-		<li<!-- IF !S_FORUM_VERSION --> class="small-icon icon-members"<!-- ENDIF -->>
-			<a href="{U_APP_FORM}" title="{L_APPLICATION_FORM_EXPLAIN}" role="menuitem">
-			<!-- IF S_FORUM_VERSION --><i class="icon fa-forumbee fa-fw" aria-hidden="true"></i><!-- ENDIF --><span>{L_APPLICATION_FORM}</span>
+{% if U_APP_FORM %}
+		<li>
+			<a href="{{ U_APP_FORM }}" title="{{ lang('APPLICATION_FORM_EXPLAIN') }}" role="menuitem">
+			<i class="icon fa-forumbee fa-fw" aria-hidden="true"></i><span>{{ lang('APPLICATION_FORM') }}</span>
 			</a>
 		</li>
-<!-- ENDIF -->
+{% endif %}

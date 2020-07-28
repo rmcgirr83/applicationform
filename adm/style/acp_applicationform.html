@@ -1,0 +1,82 @@
+{% INCLUDE 'overall_header.html' %}
+<h1>{{ lang('ACP_APPLICATIONFORM_SETTINGS') }}</h1>
+<fieldset>
+	<legend>{{ lang('BUY_ME_A_BEER') }}</legend>
+	<dl>
+		<dt><label>{{ lang('BUY ME A BEER_SHORT') }}{{ lang('COLON') }}</label><br /><span>{{ L_BUY_ME_A_BEER_EXPLAIN }}</span></dt>
+		<dd><a href="{{ lang('BUY_ME_A_BEER_URL') }}" target="_blank" rel="noreferrer noopener"><img src="{{ lang('PAYPAL_IMAGE_URL') }}" border="0" alt="{{ lang('PAYPAL_ALT') }}" style="cursor:pointer;margin-top:15px;"></a></dd>
+	</dl>
+</fieldset>
+{% if ERROR %}
+	<div class="errorbox"><h3>{{ lang('WARNING') }}</h3>
+		<p>{{ ERROR }}</p>
+	</div>
+{% endif %}
+
+<form id="appform_settings" method="post" action="{{ U_ACTION }}">
+	<fieldset>
+		<dl>
+			<dt><label for="appform_forum_id">{{ lang('APPLICATIONFORM_FORUM') }}{{ lang('COLON') }}</label><br />
+			<span>{{ lang('APPLICATIONFORM_FORUM_EXPLAIN') }}</span></dt>
+			<dd>{{ APPFORM_FORUM_ID }}</dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_guest">{{ lang('APPFORM_GUEST') }}{{ lang('COLON') }}</label><br />
+			<span>{{ lang('APPFORM_GUEST_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" name="appform_guest" value="1" {% if APPFORM_GUEST %}id="appform_guest" checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+			<label><input type="radio" class="radio" name="appform_guest" value="0" {% if not APPFORM_GUEST %}id="appform_guest" checked="checked"{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_nru">{{ lang('APPLICATIONFORM_NRU') }}{{ lang('COLON') }}</label><br />
+			<span>{{ lang('APPLICATIONFORM_NRU_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" name="appform_nru" value="1" {% if APPFORM_NRU %}id="appform_nru" checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+			<label><input type="radio" class="radio" name="appform_nru" value="0" {% if not APPFORM_NRU %}id="appform_nru" checked="checked"{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_attach">{{ lang('APPLICATIONFORM_ALLOW_ATTACHMENT') }}{{ lang('COLON') }}</label><br />
+			<span>{{ lang('APPLICATIONFORM_ALLOW_ATTACHMENT_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" name="appform_attach" value="1" {% if APPFORM_ATTACHMENT %}id="appform_attach" checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+			<label><input type="radio" class="radio" name="appform_attach" value="0" {% if not APPFORM_ATTACHMENT %}id="appform_attach" checked="checked"{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_attach_req">{{ lang('APPLICATIONFORM_ATTACHMENT_REQ') }}{{ lang('COLON') }}</label><br />
+			<span>{{ lang('APPLICATIONFORM_ATTACHMENT_REQ_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" name="appform_attach_req" value="1" {% if APPFORM_ATTACHMENT_REQ %}id="appform_attach_req" checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+			<label><input type="radio" class="radio" name="appform_attach_req" value="0" {% if not APPFORM_ATTACHMENT_REQ %}id="appform_attach_req" checked="checked"{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_positions">{{ lang('APPLICATIONFORM_POSITIONS') }}{{ lang('COLON') }}</label><br />
+			<span>{{ lang('APPLICATIONFORM_POSITIONS_EXPLAIN') }}</span></dt>
+			<dd><textarea name="appform_positions" id="appform_positions" rows="10" cols="40">{{ APPFORM_POSITIONS }}</textarea></dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_questions">{{ lang('APPLICATIONFORM_QUESTIONS') }}{{ lang('COLON') }}</label><br /><span>{{ lang('APPLICATIONFORM_QUESTIONS_EXPLAIN') }}</span></dt>
+			<dd><textarea name="appform_questions" rows="10" cols="60" style="width: 95%;">{{ APPFORM_QUESTIONS }}</textarea></dd>
+		</dl>
+	</fieldset>
+	<fieldset>
+		<legend>{{ lang('ADD_POLL') }}</legend>
+		<p><strong><em>{{ lang('ADD_POLL_EXPLAIN') }}</em></strong></p>
+		<dl>
+			<dt><label for="appform_poll_title">{{ lang('POLL_QUESTION') }}{{ lang('COLON') }}</label></dt>
+			<dd><input name="appform_poll_title" type="text" class="text medium" maxlength="255" id="appform_poll_title" value="{{ APPFORM_POLL_TITLE }}" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_poll_options">{{ lang('POLL_OPTIONS') }}{{ lang('COLON') }}</label><br /><span>{{ lang('POLL_OPTIONS_EXPLAIN') }}</span></dt>
+			<dd><textarea name="appform_poll_options" id="appform_poll_options" rows="5" cols="35" class="inputbox">{{ APPFORM_POLL_OPTIONS }}</textarea></dd>
+		</dl>
+		<dl>
+			<dt><label for="appform_poll_max_options">{{ lang('POLL_MAX_OPTIONS') }}{{ lang('COLON') }}</label></dt>
+			<dd><input type="number" min="1" max="127" name="appform_poll_max_options" id="appform_poll_max_options" value="{{ APPFORM_POLL_MAX_OPTIONS }}" class="inputbox autowidth" /></dd>
+			<dd>{{ lang('POLL_MAX_OPTIONS_EXPLAIN') }}</dd>
+		</dl>
+	</fieldset>
+	<fieldset>
+		<p class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+		</p>
+		{{ S_FORM_TOKEN }}
+	</fieldset>
+</form>
+{% INCLUDE 'overall_footer.html' %}

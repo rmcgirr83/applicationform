@@ -19,7 +19,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -34,7 +34,7 @@ if (empty($lang) || !is_array($lang))
 // equally where a string contains only two placeholders which are used to wrap text
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'APPLICATION_SUBJECT'			=> 'Application from %s',
 	'APPLICATION_MESSAGE'			=> 'A user, [b]%1$s[/b], has applied with the following information using the application form.' . "\n" . '[b]Real name[/b]: %2$s' . "\n" . '[b]IP:[/b] %3$s'. "\n" . '[b]Email:[/b] %4$s'. "\n" . '[b]Applying for[/b]: %5$s' . "\n" . '[b]Reason for applying:[/b] %6$s',
 	'APPLICATION_SEND'				=> 'Your application has been sent to the administrators of this board. They’ll decide upon your application in the coming days.',
@@ -43,7 +43,7 @@ $lang = array_merge($lang, array(
 	'APPLICATION_REALNAME'			=> 'Real name',
 	'APPLICATION_EMAIL'				=> 'E-mail address',
 	'APPLICATION_POSITION'			=> 'Position you would like to have',
-	'APPLICATION_WHY'				=> 'Why should we choose you?',
+	'APPLICATION_WHY'				=> 'Why should we choose you',
 	'APP_NOT_COMPLETELY_FILLED'		=> 'You need to complete all fields in the application.',
 	'APP_COMPLETE_NAME_WHY'			=> 'You must supply a name and why you want to be considered.',
 	'ADD_ATTACHMENT_EXPLAIN'		=> 'Attach a file to assist us in making our determination on your application.',
@@ -54,4 +54,4 @@ $lang = array_merge($lang, array(
 	'APPLICATION QUESTION_ERROR'	=> 'You didn’t answer all the questions',
 	'APPLICATION_REQUIRES_WHY'		=> 'You need to answer why we should choose you',
 	'APPLICATION_ANSWER_TOO_SHORT'	=> 'The question <em>%1s</em> contains too few characters',
-));
+]);
