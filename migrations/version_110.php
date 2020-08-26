@@ -14,7 +14,7 @@ namespace rmcgirr83\applicationform\migrations;
 * Primary migration
 */
 
-class version_110 extends \phpbb\db\migration\migration
+class version_110 extends \phpbb\db\migration\container_aware_migration
 {
 	static public function depends_on()
 	{
@@ -33,9 +33,10 @@ class version_110 extends \phpbb\db\migration\migration
 
 	public function copy_positions()
 	{
-		$text_config = new \phpbb\config\db_text($this->db, $this->table_prefix . 'config_text');
 
-		$text_config->set_array([
+		$config_text = $this->container->get('config_text');
+
+		$config_text->set_array([
 			'appform_positions'	=> $this->config['appform_positions'],
 			'appform_info'		=> '',
 			'appform_info_uid'	=> '',

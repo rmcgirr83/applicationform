@@ -114,19 +114,6 @@ class main_controller implements main_interface
 		$this->php_ext = $php_ext;
 		$this->applicationform = $applicationform;
 		$this->captcha_factory = $captcha_factory;
-
-		if (!function_exists('submit_post'))
-		{
-			include($this->root_path . 'includes/functions_posting.' . $this->php_ext);
-		}
-		if (!function_exists('validate_data'))
-		{
-			include($this->root_path . 'includes/functions_user.' . $this->php_ext);
-		}
-		if (!class_exists('parse_message'))
-		{
-			include($this->root_path . 'includes/message_parser.' . $this->php_ext);
-		}
 	}
 
 	/**
@@ -204,6 +191,10 @@ class main_controller implements main_interface
 				$error[] = $this->language->lang('FORM_INVALID');
 			}
 
+			if (!function_exists('validate_data'))
+			{
+				include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+			}
 			if (!$this->user->data['is_registered'])
 			{
 				$error = validate_data($data, [
@@ -249,6 +240,11 @@ class main_controller implements main_interface
 				}
 			}
 
+
+			if (!class_exists('parse_message'))
+			{
+				include($this->root_path . 'includes/message_parser.' . $this->php_ext);
+			}
 			$message_parser = new \parse_message();
 			$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
 
@@ -350,6 +346,10 @@ class main_controller implements main_interface
 				];
 
 				// Submit the post!
+				if (!function_exists('submit_post'))
+				{
+					include($this->root_path . 'includes/functions_posting.' . $this->php_ext);
+				}
 				submit_post('post', $subject, $this->user->data['username'], POST_NORMAL, $poll, $data);
 
 				//reset captcha

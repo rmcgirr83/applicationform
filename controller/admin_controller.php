@@ -94,11 +94,6 @@ class admin_controller implements admin_interface
 		$this->user = $user;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
-
-		if (!function_exists('display_custom_bbcodes'))
-		{
-			include($this->root_path . 'includes/functions_display.' . $this->php_ext);
-		}
 	}
 
 	/**
@@ -266,6 +261,11 @@ class admin_controller implements admin_interface
 			'U_ACTION'			=> $this->u_action,
 		]);
 		// Assigning custom bbcodes
+
+		if (!function_exists('display_custom_bbcodes'))
+		{
+			include($this->root_path . 'includes/functions_display.' . $this->php_ext);
+		}
 		display_custom_bbcodes();
 	}
 

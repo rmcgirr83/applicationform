@@ -1,7 +1,3 @@
 rmcgirr83_applicationform_displayform:
     path: /applicationform
     defaults: { _controller: rmcgirr83.applicationform.main.controller:displayform }
-
-rmcgirr83_applicationform_whois:
-    path: /applicationform/{user_ip}
-    defaults: { _controller: rmcgirr83.applicationform.main.controller:whois }
