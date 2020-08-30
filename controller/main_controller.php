@@ -240,7 +240,6 @@ class main_controller implements main_interface
 				}
 			}
 
-
 			if (!class_exists('parse_message'))
 			{
 				include($this->root_path . 'includes/message_parser.' . $this->php_ext);
