@@ -241,7 +241,6 @@ class admin_controller implements admin_interface
 			'APPFORM_QUESTIONS' => $appform_questions,
 
 			'L_POLL_OPTIONS_EXPLAIN'	=> $this->language->lang('POLL_OPTIONS_EXPLAIN', (int) $this->config['max_poll_options']),
-			'L_BUY_ME_A_BEER_EXPLAIN'		=> $this->language->lang('BUY ME A BEER_EXPLAIN', '<a href="' . $this->language->lang('BUY_ME_A_BEER_URL') . '" target="_blank" rel=”noreferrer noopener”>', '</a>'),
 
 			'BBCODE_STATUS'			=> $this->language->lang('BBCODE_IS_ON', '<a href="' . append_sid("{$this->root_path}faq.$this->php_ext", 'mode=bbcode') . '">', '</a>'),
 			'SMILIES_STATUS'		=> $this->language->lang('SMILIES_ARE_ON'),
