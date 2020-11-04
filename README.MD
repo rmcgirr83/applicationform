@@ -3,7 +3,7 @@ applicationform
 
 phpBB extension that allows users to apply for certain team positions. The applications are sent to a forum, as chosen in the ACP settings of the extension, where administrators can read them and see if the users are the best for the position.
 
-[![Build Status](https://travis-ci.org/rmcgirr83/applicationform.svg?branch=master)](https://travis-ci.org/rmcgirr83/applicationform)
+[![Build Status](https://travis-ci.com/rmcgirr83/applicationform.svg?branch=master)](https://travis-ci.com/rmcgirr83/applicationform)
 
 ACP Settings
 ![Screenshot](acp.PNG)
