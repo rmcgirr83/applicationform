@@ -1,7 +1,8 @@
-applicationform
-=========================
+# ![Application Form](https://imattpro.github.io/logo/search.png "Application Form") Application Form for phpBB3
 
 phpBB extension that allows users to apply for certain team positions. The applications are sent to a forum, as chosen in the ACP settings of the extension, where administrators can read them and see if the users are the best for the position.
+
+[![Build Status](https://github.com/rmcgirr83/applicationform/workflows/Tests/badge.svg)](https://github.com/rmcgirr83/applicationform/actions)
 
 ACP Settings
 ![Screenshot](acp.PNG)
