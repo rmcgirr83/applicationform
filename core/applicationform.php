@@ -15,17 +15,17 @@ use phpbb\user;
 class applicationform
 {
 
-	/** @var \phpbb\db\driver\driver_interface */
+	/** @var db */
 	protected $db;
 
-	/** @var \phpbb\user */
+	/** @var user */
 	protected $user;
 
 	/**
 	* Constructor
 	*
-	* @param \phpbb\db\driver\driver_interface					$db					Database object
-	* @param \phpbb\user										$user				User object
+	* @param driver_interface		$db					Database object
+	* @param user					$user				User object
 	* @access public
 	*/
 	public function __construct(driver_interface $db, user $user)

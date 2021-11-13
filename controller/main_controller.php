@@ -29,31 +29,31 @@ use phpbb\exception\http_exception;
 */
 class main_controller implements main_interface
 {
-	/** @var \phpbb\auth\auth */
+	/** @var auth */
 	protected $auth;
 
-	/** @var \phpbb\config\config */
+	/** @var config */
 	protected $config;
 
-	/** @var \phpbb\config\db_text */
+	/** @var db_text */
 	protected $config_text;
 
-	/** @var \phpbb\db\driver\driver_interface */
+	/** @var db */
 	protected $db;
 
-	/** @var \phpbb\controller\helper */
+	/** @var helper */
 	protected $helper;
 
-	/** @var \phpbb\language\language */
+	/** @var language */
 	protected $language;
 
-	/* @var \phpbb\request\request */
+	/* @var request */
 	protected $request;
 
-	/** @var \phpbb\template\template */
+	/** @var template */
 	protected $template;
 
-	/** @var \phpbb\user */
+	/** @var user */
 	protected $user;
 
 	/** @var string phpBB root path */
@@ -62,28 +62,28 @@ class main_controller implements main_interface
 	/** @var string phpEx */
 	protected $php_ext;
 
-	/* @var \rmcgirr83\applicationform\core\applicationform */
+	/* @var applicationform */
 	protected $applicationform;
 
-	/** @var \phpbb\captcha\factory */
+	/** @var captcha_factory */
 	protected $captcha_factory;
 
 	/**
 	* Constructor
 	*
-	* @param \phpbb\auth\auth									$auth				Auth object
-	* @param \phpbb\config\config								$config				Config object
-	* @param \phpbb\config\db_text 								$config_text		Config text object
-	* @param \phpbb\db\driver\driver_interface					$db					Database object
-	* @param \phpbb\controller\helper							$helper				Helper object
-	* @param \phpbb\language\language							$language			Language object
-	* @param \phpbb\request\request								$request			Request object
-	* @param \phpbb\template\template							$template			Template object
-	* @param \phpbb\user										$user				User object
-	* @param string												$root_path			phpBB root path
-	* @param string												$php_ext			phpEx
-	* @param \rmcgirr83\applicationform\core\applicationform	$applicationform	Methods for the class
-	* @param \phpbb\captcha\factory								$captcha_factory	Captcha object
+	* @param auth				$auth				Auth object
+	* @param config				$config				Config object
+	* @param db_text 			$config_text		Config text object
+	* @param driver_interface	$db					Database object
+	* @param helper				$helper				Helper object
+	* @param language			$language			Language object
+	* @param request			$request			Request object
+	* @param template			$template			Template object
+	* @param user				$user				User object
+	* @param string				$root_path			phpBB root path
+	* @param string				$php_ext			phpEx
+	* @param applicationform	$applicationform	Methods for the class
+	* @param factory			$captcha_factory	Captcha object
 	* @access public
 	*/
 	public function __construct(

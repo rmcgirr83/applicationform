@@ -24,33 +24,33 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 */
 class listener implements EventSubscriberInterface
 {
-	/** @var \phpbb\config\config */
+	/** @var config */
 	protected $config;
 
-	/** @var \phpbb\controller\helper */
+	/** @var helper */
 	protected $helper;
 
-	/** @var \phpbb\language\language */
+	/** @var language */
 	protected $language;
 
-	/* @var \phpbb\template\template */
+	/* @var template */
 	protected $template;
 
-	/** @var \phpbb\user */
+	/** @var user */
 	protected $user;
 
-	/* @var \rmcgirr83\applicationform\core\applicationform */
+	/* @var applicationform */
 	protected $applicationform;
 
 	/**
 	* Constructor
 	*
-	* @param \phpbb\config\config								$config				Config object
-	* @param \phpbb\controller\helper 							$helper				Helper object
-	* @param \phpbb\language\language							$language			Language object
-	* @param \phpbb\template\template							$template			Template object
-	* @param \phpbb\user										$user				User object
-	* @param \rmcgirr83\applicationform\core\applicationform	$applicationform	Methods for the class
+	* @param config				$config				Config object
+	* @param helper 			$helper				Helper object
+	* @param language			$language			Language object
+	* @param template			$template			Template object
+	* @param user				$user				User object
+	* @param applicationform	$applicationform	Methods for the class
 	* @access public
 	*/
 	public function __construct(
