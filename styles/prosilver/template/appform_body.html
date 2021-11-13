@@ -1,6 +1,28 @@
 {% INCLUDE 'overall_header.html' %}
 <h2 class="titlespace">{{ lang('APPLICATION_PAGETITLE') }}</h2>
 
+{% if S_DISPLAY_PREVIEW %}
+<div class="post bg2">
+	<div class="inner">
+
+	<div class="postbody">
+		<h3>{{ lang('PREVIEW') }}{{ lang('COLON') }} {PREVIEW_SUBJECT}</h3>
+
+		<div class="content">{PREVIEW_MESSAGE}</div>
+		<!-- IF .attachment -->
+		<dl class="attachbox">
+			<dt>{{ lang('ATTACHMENTS') }}</dt>
+			<!-- BEGIN attachment -->
+			<dd>{attachment.DISPLAY_ATTACHMENT}</dd>
+			<!-- END attachment -->
+		</dl>
+		<!-- ENDIF -->
+	</div>
+
+	</div>
+</div>
+{% endif %}
+
 <form method="post" id="appform" {{ S_FORM_ENCTYPE }}>
 	{% if APPFORM_INFO %}
 	<div class="contactpanel">
@@ -73,6 +95,7 @@
 		<div class="inner">
 		<fieldset class="submit-buttons">
 			{{ S_HIDDEN_FIELDS }}
+			<input type="submit" name="preview" value="{{ lang('PREVIEW') }}" class="button1" />&nbsp;
 			<input type="submit" name="submit" id="submit" value="{{ lang('SUBMIT') }}" class="button1" />
 			{{ S_FORM_TOKEN }}
 		</fieldset>

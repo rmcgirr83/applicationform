@@ -175,13 +175,13 @@ class main_controller implements main_interface
 		$appform_positions = explode("\n", $appform_data['appform_positions']);
 
 		// Visual Confirmation - The CAPTCHA kicks in here
-		if (!$this->user->data['is_registered'])
+		if (empty($this->user->data['is_registered']))
 		{
 			$captcha = $this->captcha_factory->get_instance($this->config['captcha_plugin']);
 			$captcha->init(CONFIRM_POST);
 		}
 
-		if ($this->request->is_set_post('submit'))
+		if ($this->request->is_set_post('submit') || $this->request->is_set_post('preview'))
 		{
 			$error = [];
 
@@ -195,7 +195,7 @@ class main_controller implements main_interface
 			{
 				include($this->root_path . 'includes/functions_user.' . $this->php_ext);
 			}
-			if (!$this->user->data['is_registered'])
+			if (empty($this->user->data['is_registered']))
 			{
 				$error = validate_data($data, [
 					'username'			=> array(
@@ -226,7 +226,7 @@ class main_controller implements main_interface
 			}
 
 			// CAPTCHA check
-			if (!$this->user->data['is_registered'] && !$captcha->is_solved())
+			if (empty($this->user->data['is_registered']) && !$captcha->is_solved())
 			{
 				$vc_response = $captcha->validate($data);
 				if ($vc_response !== false)
@@ -253,7 +253,7 @@ class main_controller implements main_interface
 
 			$url = generate_board_url() . '/memberlist.' . $this->php_ext . '?mode=viewprofile&u=' . $this->user->data['user_id'];
 			$color = !empty($this->user->data['user_colour']) ? '[color=#' . $this->user->data['user_colour'] . ']' . $data['username'] . '[/color]' : $data['username'];
-			$user_name = $this->user->data['is_registered'] ? '[url=' . $url . ']' . $color . '[/url]' : $data['username'];
+			$user_name = !empty($this->user->data['is_registered']) ? '[url=' . $url . ']' . $color . '[/url]' : $data['username'];
 			$user_ip = '[url=http://en.utrace.de/?query=' . $this->user->ip . ']' . $this->user->ip . '[/url]';
 
 			$responses = '';
@@ -304,9 +304,45 @@ class main_controller implements main_interface
 			{
 				$error[] = $this->language->lang('APPLICATION_REQUIRES_ATTACHMENT');
 			}
+			// Preview
+			if (!sizeof($error) && $this->request->is_set_post('preview'))
+			{
+				$preview_message = $message_parser->format_display(true, true, true, false);
+
+				$preview_subject = censor_text($subject);
+
+				// Attachment Preview
+				if (count($message_parser->attachment_data))
+				{
+					$this->template->assign_var('S_HAS_ATTACHMENTS', true);
+
+					$update_count = array();
+					$attachment_data = $message_parser->attachment_data;
+
+					parse_attachments($this->config['appform_forum_id'], $preview_message, $attachment_data, $update_count, true);
+
+					foreach ($attachment_data as $i => $attachment)
+					{
+						$this->template->assign_block_vars('attachment', array(
+							'DISPLAY_ATTACHMENT'	=> $attachment)
+						);
+					}
+					unset($attachment_data);
+				}
+
+				if (!count($error))
+				{
+					$this->template->assign_vars(array(
+						'PREVIEW_SUBJECT'		=> $preview_subject,
+						'PREVIEW_MESSAGE'		=> $preview_message,
+
+						'S_DISPLAY_PREVIEW'		=> !empty($preview_message),
+					));
+				}
+			}
 
 			// no errors, let's proceed
-			if (!sizeof($error))
+			if (!sizeof($error) && $this->request->is_set_post('submit'))
 			{
 				$sql = 'SELECT forum_name
 					FROM ' . FORUMS_TABLE . '
@@ -352,7 +388,7 @@ class main_controller implements main_interface
 				submit_post('post', $subject, $this->user->data['username'], POST_NORMAL, $poll, $data);
 
 				//reset captcha
-				if (!$this->user->data['is_registered'] && (isset($captcha) && $captcha->is_solved() === true))
+				if (empty($this->user->data['is_registered']) && (isset($captcha) && $captcha->is_solved() === true))
 				{
 					$captcha->reset();
 				}
@@ -369,13 +405,13 @@ class main_controller implements main_interface
 		// Visual Confirmation - Show images
 		$s_hidden_fields = [];
 
-		if (!$this->user->data['is_registered'])
+		if (empty($this->user->data['is_registered']))
 		{
 			$s_hidden_fields = array_merge($s_hidden_fields, $captcha->get_hidden_fields());
 		}
 		$s_hidden_fields = build_hidden_fields($s_hidden_fields);
 
-		if (!$this->user->data['is_registered'])
+		if (empty($this->user->data['is_registered']))
 		{
 			$this->template->assign_vars([
 				'CAPTCHA_TEMPLATE'		=> $captcha->get_template(),
