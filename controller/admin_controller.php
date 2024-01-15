@@ -104,7 +104,7 @@ class admin_controller implements admin_interface
 	public function display_options()
 	{
 		$this->language->add_lang('posting');
-		$this->language->add_lang('acp_applicationform', 'rmcgirr83/applicationform');
+		$this->language->add_lang(['acp_applicationform', 'application'], 'rmcgirr83/applicationform');
 
 		$appform_data			= $this->config_text->get_array([
 			'appform_questions',
@@ -117,7 +117,7 @@ class admin_controller implements admin_interface
 
 		$appform_questions = $appform_data['appform_questions'];
 		$appform_positions = $appform_data['appform_positions'];
-		$appform_info		= $appform_data['appform_info'];
+		$appform_info		= empty($appform_data['appform_info']) ? $this->language->lang('APPLICATION_WELCOME_MESSAGE') : $appform_data['appform_info'];
 		$appform_info_uid	= $appform_data['appform_info_uid'];
 		$appform_info_bitfield	= $appform_data['appform_info_bitfield'];
 		$appform_info_flags		= $appform_data['appform_info_flags'];
@@ -229,7 +229,8 @@ class admin_controller implements admin_interface
 			'APPFORM_INFO_PREVIEW'	=> $appform_info_preview,
 
 			'APPFORM_FORUM_ID'	=> $this->appform_forum_select($this->request->variable('appform_forum_id', $this->config['appform_forum_id'])),
-			'APPFORM_GUEST'		=> $this->request->variable('appform_guest', $this->config['appform_guest'], true),
+			'APPFORM_VISIBLE'	=> $this->request->variable('appform_visible', $this->config['appform_visible']),
+			'APPFORM_GUEST'		=> $this->request->variable('appform_guest', $this->config['appform_guest']),
 			'APPFORM_NRU'		=> $this->request->variable('appform_nru', $this->config['appform_nru']),
 			'APPFORM_ATTACHMENT' => $this->request->variable('appform_attach', $this->config['appform_attach']),
 			'APPFORM_ATTACHMENT_REQ' => $this->request->variable('appform_attach_req', $this->config['appform_attach_req']),
@@ -277,6 +278,7 @@ class admin_controller implements admin_interface
 	protected function set_options()
 	{
 		$this->config->set('appform_forum_id', $this->request->variable('appform_forum_id', 0));
+		$this->config->set('appform_visible', $this->request->variable('appform_visible', 0));
 		$this->config->set('appform_guest', $this->request->variable('appform_guest', 0));
 		$this->config->set('appform_nru', $this->request->variable('appform_nru', 0));
 		$this->config->set('appform_attach', $this->request->variable('appform_attach', 0));

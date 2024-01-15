@@ -181,9 +181,9 @@ class main_controller implements main_interface
 			$captcha->init(CONFIRM_POST);
 		}
 
+		$error = [];
 		if ($this->request->is_set_post('submit') || $this->request->is_set_post('preview'))
 		{
-			$error = [];
 
 			// Test if form key is valid
 			if (!check_form_key('applicationform'))
@@ -195,17 +195,14 @@ class main_controller implements main_interface
 			{
 				include($this->root_path . 'includes/functions_user.' . $this->php_ext);
 			}
-			if (empty($this->user->data['is_registered']))
-			{
-				$error = validate_data($data, [
-					'username'			=> array(
-						array('string', false, $this->config['min_name_chars'], $this->config['max_name_chars']),
-						array('username', '')),
-					'email'			=> array(
-						array('string', false, 6, 60),
-						array('user_email')),
-				]);
-			}
+			$error = validate_data($data, [
+				'username'			=> array(
+					array('string', false, $this->config['min_name_chars'], $this->config['max_name_chars']),
+					array('username', '')),
+				'email'			=> array(
+					array('string', false, 6, 60),
+					array('user_email')),
+			]);
 
 			if (validate_string($data['why'], false, $this->config['min_post_chars']))
 			{
@@ -376,8 +373,8 @@ class main_controller implements main_interface
 					'post_time' 		=> time(),
 					'forum_name'		=> $forum_name,
 					'enable_indexing'	=> true,
-					'force_approved_state'	=> true,
-					'force_visibility' => true,
+					'force_approved_state'	=> ($this->config['appform_visible']) ? ITEM_UNAPPROVED : true,
+					'force_visibility' => ($this->config['appform_visible']) ? ITEM_UNAPPROVED : true,
 				];
 
 				// Submit the post!
@@ -435,9 +432,11 @@ class main_controller implements main_interface
 				$appform_info['appform_info_flags']
 			);
 		}
+		// Replace "error" strings with their real, localised form
+		$error = array_map(array($this->language, 'lang'), $error);
 
 		$this->template->assign_vars([
-			'REALNAME'				=> ($this->user->data['user_id'] != ANONYMOUS && empty($data['username'])) ?  $this->user->data['username'] : $data['username'],
+			'REALNAME'				=> $data['username'],
 			'APPLICATION_POSITIONS' => $this->display_positions($appform_positions, $data['position']),
 			'APPLICATION_EMAIL'		=> $data['email'],
 			'WHY'					=> $data['why'],
@@ -445,7 +444,7 @@ class main_controller implements main_interface
 			'APPFORM_INFO'		=> (!empty($appform_info)) ? $appform_info : $this->language->lang('APPLICATION_WELCOME_MESSAGE'),
 
 			'S_FORM_ENCTYPE'		=> $form_enctype,
-			'S_ERROR'				=> (isset($error) && sizeof($error)) ? implode('<br />', $error) : '',
+			'S_ERROR'				=> (isset($error) && sizeof($error)) ? implode('<br>', $error) : '',
 			'S_ATTACH_BOX'			=> ($attachment_allowed && $form_enctype) ? true : false,
 			'S_ATTACH_REQ'			=> $attachment_req,
 			'S_EMAIL_NEEDED'		=> $this->user->data['user_id'] == ANONYMOUS ? true : false,

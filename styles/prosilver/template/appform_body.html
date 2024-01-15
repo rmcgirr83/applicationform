@@ -1,64 +1,67 @@
 {% INCLUDE 'overall_header.html' %}
 <h2 class="titlespace">{{ lang('APPLICATION_PAGETITLE') }}</h2>
 
-{% if S_DISPLAY_PREVIEW %}
-<div class="post bg2">
-	<div class="inner">
-
-	<div class="postbody">
-		<h3>{{ lang('PREVIEW') }}{{ lang('COLON') }} {PREVIEW_SUBJECT}</h3>
-
-		<div class="content">{PREVIEW_MESSAGE}</div>
-		<!-- IF .attachment -->
-		<dl class="attachbox">
-			<dt>{{ lang('ATTACHMENTS') }}</dt>
-			<!-- BEGIN attachment -->
-			<dd>{attachment.DISPLAY_ATTACHMENT}</dd>
-			<!-- END attachment -->
-		</dl>
-		<!-- ENDIF -->
-	</div>
-
-	</div>
-</div>
-{% endif %}
-
 <form method="post" id="appform" {{ S_FORM_ENCTYPE }}>
 	{% if APPFORM_INFO %}
-	<div class="contactpanel">
-		<div class="content">
-			{{ APPFORM_INFO }}
+	<div class="panel">
+		<div class="inner">
+			<fieldset class="fields2">
+				<p>{{ APPFORM_INFO }}</p>
+			</fieldset>
 		</div>
 	</div>
-		<br class="clear" />
+		<br class="clear">
 	{% endif %}
+	{% if S_DISPLAY_PREVIEW %}
+	<div class="post bg2">
+		<div class="inner">
+
+		<div class="postbody">
+			<h3>{{ lang('PREVIEW') ~ lang('COLON') }} {PREVIEW_SUBJECT}</h3>
+
+			<div class="content">{PREVIEW_MESSAGE}</div>
+			{% if .attachment %}
+			<dl class="attachbox">
+				<dt>{{ lang('ATTACHMENTS') }}</dt>
+				<!-- BEGIN attachment -->
+				<dd>{attachment.DISPLAY_ATTACHMENT}</dd>
+				<!-- END attachment -->
+			</dl>
+			{% endif %}
+		</div>
+
+		</div>
+	</div>
+	{% endif %}
+
 	<div class="panel">
 		<div class="inner">
 			<fieldset class="fields2">
 				{% if S_ERROR %}
 				<p class="error">{{ S_ERROR }}</p>
 				{% endif %}
+				<p>{{ lang('APPLICATION_NOTICE') }}</p>
 				<dl>
-					<dt><label for="name">{{ lang('APPLICATION_REALNAME') }}{{ lang('COLON') }}*</label></dt>
+					<dt><label for="name">{{ lang('APPLICATION_REALNAME') ~ lang('COLON') }}*</label></dt>
 					<dd><input type="text" name="name" size="25" class="inputbox autowidth" value="{{ REALNAME }}" /></dd>
 				</dl>
 				<dl>
-					<dt><label for="email">{{ lang('EMAIL') }}{{ lang('COLON') }}*</label></dt>
+					<dt><label for="email">{{ lang('EMAIL') ~ lang('COLON') }}*</label></dt>
 					<dd><input type="text" name="email" size="25" maxlength="100" class="inputbox autowidth" value="{{ APPLICATION_EMAIL }}" {% if not S_EMAIL_NEEDED %}disabled{% endif %} /></dd>
 				</dl>
 				{% if APPLICATION_POSITIONS %}
 				<dl>
-					<dt><label for="postion">{{ lang('APPLICATION_POSITION') }}{{ lang('COLON') }}</label></dt>
+					<dt><label for="postion">{{ lang('APPLICATION_POSITION') ~ lang('COLON') }}</label></dt>
 					<dd><select name="position" id="position">{{ APPLICATION_POSITIONS }}</select></dd>
 				</dl>
 				{% endif %}
 				<dl>
-					<dt><label for="why">{{ lang('APPLICATION_WHY') }}{{ lang('COLON') }}*</label></dt>
+					<dt><label for="why">{{ lang('APPLICATION_WHY') ~ lang('COLON') }}*</label></dt>
 					<dd><textarea rows="5" cols="50" name="why" class="inputbox">{{ WHY }}</textarea></dd>
 				</dl>
 				{% for questions in loops.questions %}
 				<dl>
-					<dt><label for="(questions.QUESTION}">{{ questions.QUESTION }}{{ lang('COLON') }}*</label></dt>
+					<dt><label for="(questions.QUESTION}">{{ questions.QUESTION ~ lang('COLON') }}*</label></dt>
 					<dd><input type="text" name="{{ questions.FORM_NAME }}" class="inputbox" value="{{ questions.ANSWER }}" /></dd>
 				</dl>
 				{% endfor %}
@@ -77,13 +80,13 @@
 
 		<fieldset class="fields2" id="attach-panel-basic">
 		<dl>
-			<dt><label for="fileupload">{{ lang('FILENAME') }}{{ lang('COLON') }}{% if S_ATTACH_REQ %}*{% endif %}</label></dt>
+			<dt><label for="fileupload">{{ lang('FILENAME') ~ lang('COLON') }}{% if S_ATTACH_REQ %}*{% endif %}</label></dt>
 			<dd>
 				<input type="file" name="fileupload" id="fileupload" class="inputbox autowidth" />
 			</dd>
 		</dl>
 		<dl>
-			<dt><label for="filecomment">{{ lang('FILE_COMMENT') }}{{ lang('COLON') }}</label></dt>
+			<dt><label for="filecomment">{{ lang('FILE_COMMENT') ~ lang('COLON') }}</label></dt>
 			<dd><textarea name="filecomment" id="filecomment" rows="1" cols="40" class="inputbox autowidth">{{ FILE_COMMENT }}</textarea></dd>
 		</dl>
 		</fieldset>
