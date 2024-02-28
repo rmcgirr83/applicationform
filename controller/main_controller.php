@@ -132,6 +132,10 @@ class main_controller implements main_interface
 			throw new http_exception(401, 'NOT_AUTHORISED');
 		}
 
+		include($this->root_path . 'includes/functions_posting.' . $this->php_ext);
+		include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+		include($this->root_path . 'includes/message_parser.' . $this->php_ext);
+
 		$this->language->add_lang(['ucp', 'posting']);
 		$this->language->add_lang('application', 'rmcgirr83/applicationform');
 
@@ -145,6 +149,7 @@ class main_controller implements main_interface
 			'email'			=> ($this->user->data['user_id'] != ANONYMOUS) ? $this->user->data['user_email'] : strtolower($this->request->variable('email', '')),
 			'why'			=> $this->request->variable('why', '', true),
 			'position'		=> $this->request->variable('position', '', true),
+			'filecomment'	=> $this->request->variable('filecomment', '', true),
 		];
 
 		$appform_data			= $this->config_text->get_array([
@@ -182,6 +187,9 @@ class main_controller implements main_interface
 		}
 
 		$error = [];
+		$message_parser = new \parse_message();
+		$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);		
+
 		if ($this->request->is_set_post('submit') || $this->request->is_set_post('preview'))
 		{
 
@@ -191,10 +199,6 @@ class main_controller implements main_interface
 				$error[] = $this->language->lang('FORM_INVALID');
 			}
 
-			if (!function_exists('validate_data'))
-			{
-				include($this->root_path . 'includes/functions_user.' . $this->php_ext);
-			}
 			$error = validate_data($data, [
 				'username'			=> array(
 					array('string', false, $this->config['min_name_chars'], $this->config['max_name_chars']),
@@ -236,13 +240,6 @@ class main_controller implements main_interface
 					$error[] = $this->language->lang('TOO_MANY_REGISTERS');
 				}
 			}
-
-			if (!class_exists('parse_message'))
-			{
-				include($this->root_path . 'includes/message_parser.' . $this->php_ext);
-			}
-			$message_parser = new \parse_message();
-			$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
 
 			// Setting the variables we need to submit the post to the forum where all the applications come in
 			$message = censor_text(trim('[quote] ' . $data['why'] . '[/quote]'));
@@ -297,7 +294,7 @@ class main_controller implements main_interface
 
 			$message_parser->parse(true, true, true, true, false, true, true);
 
-			if (empty($message_parser->attachment_data) && $attachment_req && $attachment_allowed)
+			if (empty($message_parser->attachment_data) && $attachment_allowed && $attachment_req)
 			{
 				$error[] = $this->language->lang('APPLICATION_REQUIRES_ATTACHMENT');
 			}
@@ -327,15 +324,11 @@ class main_controller implements main_interface
 					unset($attachment_data);
 				}
 
-				if (!count($error))
-				{
-					$this->template->assign_vars(array(
-						'PREVIEW_SUBJECT'		=> $preview_subject,
-						'PREVIEW_MESSAGE'		=> $preview_message,
-
-						'S_DISPLAY_PREVIEW'		=> !empty($preview_message),
-					));
-				}
+				$this->template->assign_vars(array(
+					'PREVIEW_SUBJECT'		=> $preview_subject,
+					'PREVIEW_MESSAGE'		=> $preview_message,
+					'S_DISPLAY_PREVIEW'		=> !empty($preview_message),
+				));
 			}
 
 			// no errors, let's proceed
@@ -377,11 +370,6 @@ class main_controller implements main_interface
 					'force_visibility' => ($this->config['appform_visible']) ? ITEM_UNAPPROVED : true,
 				];
 
-				// Submit the post!
-				if (!function_exists('submit_post'))
-				{
-					include($this->root_path . 'includes/functions_posting.' . $this->php_ext);
-				}
 				submit_post('post', $subject, $this->user->data['username'], POST_NORMAL, $poll, $data);
 
 				//reset captcha
@@ -440,8 +428,9 @@ class main_controller implements main_interface
 			'APPLICATION_POSITIONS' => $this->display_positions($appform_positions, $data['position']),
 			'APPLICATION_EMAIL'		=> $data['email'],
 			'WHY'					=> $data['why'],
-
-			'APPFORM_INFO'		=> (!empty($appform_info)) ? $appform_info : $this->language->lang('APPLICATION_WELCOME_MESSAGE'),
+			'FILE_COMMENT'			=> $data['filecomment'],
+			
+			'APPFORM_INFO'			=> (!empty($appform_info)) ? $appform_info : $this->language->lang('APPLICATION_WELCOME_MESSAGE'),
 
 			'S_FORM_ENCTYPE'		=> $form_enctype,
 			'S_ERROR'				=> (isset($error) && sizeof($error)) ? implode('<br>', $error) : '',
