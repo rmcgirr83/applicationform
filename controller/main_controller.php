@@ -188,7 +188,7 @@ class main_controller implements main_interface
 
 		$error = [];
 		$message_parser = new \parse_message();
-		$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);		
+		$message_parser->parse_attachments('fileupload', 'post', $this->config['appform_forum_id'], true, false, false);
 
 		if ($this->request->is_set_post('submit') || $this->request->is_set_post('preview'))
 		{
@@ -429,7 +429,7 @@ class main_controller implements main_interface
 			'APPLICATION_EMAIL'		=> $data['email'],
 			'WHY'					=> $data['why'],
 			'FILE_COMMENT'			=> $data['filecomment'],
-			
+
 			'APPFORM_INFO'			=> (!empty($appform_info)) ? $appform_info : $this->language->lang('APPLICATION_WELCOME_MESSAGE'),
 
 			'S_FORM_ENCTYPE'		=> $form_enctype,
