@@ -20,14 +20,14 @@
 			<h3>{{ lang('PREVIEW') ~ lang('COLON') }} {PREVIEW_SUBJECT}</h3>
 
 			<div class="content">{PREVIEW_MESSAGE}</div>
-			{% if .attachment %}
+			<!-- IF .attachment -->
 			<dl class="attachbox">
 				<dt>{{ lang('ATTACHMENTS') }}</dt>
 				<!-- BEGIN attachment -->
 				<dd>{attachment.DISPLAY_ATTACHMENT}</dd>
 				<!-- END attachment -->
 			</dl>
-			{% endif %}
+			<!-- ENDIF -->
 		</div>
 
 		</div>
